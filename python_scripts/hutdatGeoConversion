@@ -1,0 +1,12 @@
+import pandas as pd
+import os
+import geopandas as gpd
+from shapely.geometry import Point
+
+hur= pd.read_csv("HURDAT.csv") 
+geometry = [Point(lat, lon) for lat, lon in zip(hur['Lat'], hur['Lon'])] # not sure about (lat,lon) or (lon,lat)
+geo_df = gpd.GeoDataFrame(hur, geometry=geometry, crs="EPSG:4326")
+
+parent_directory = os.path.dirname(os.path.abspath(__file__))
+data_folder_path = os.path.join(parent_directory, '..', 'data')
+geo_df.to_file(os.path.join(data_folder_path, 'hurdat.geojson'), driver='GeoJSON')

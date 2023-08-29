@@ -1,0 +1,75 @@
+.container {
+    display: flex;
+    width: 100%;
+  }
+  
+  .map-container {
+    flex: 75%;
+    height: 100vh;
+    
+  }
+  
+  .menu {
+    flex: 25%;
+    background-color: #2a2929;
+    height: 100vh;
+    border-radius: 3px;
+    font-family: 'Open Sans', sans-serif;
+  }
+
+  .separator {
+    flex: 2px; 
+    height: 100vh;
+    background-color: #aaa;
+  }
+
+  #theme {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    font-family: 'Open Sans', sans-serif;
+    color: #ffffff;
+    border-radius: 5px;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+  }
+
+  #theme label {
+    display: block;
+    margin-bottom: 5px;
+    margin-right: 10px;
+  }
+
+  #theme input[type="radio"] {
+    display: none;
+  }
+
+  #theme input[type="radio"] + label {
+    cursor: pointer;
+  }
+
+  #theme input[type="radio"] + label::before {
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+  }
+
+  #theme input[type="radio"]:checked + label::before {
+    background-color: #354044;
+  }
+
+  #theme .separator {
+    height: 0px;
+    background-color: #ffffff;
+    margin: 1px 0;
+    flex-basis: 100%;
+  }

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HurriViz</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <div id="map-container" class="map-container">
+            <div id="theme">
+                <input id="mapbox://styles/mapbox/light-v11" type="radio" name="rtoggle" value="Light" >
+                <label for="mapbox://styles/mapbox/light-v11">  Light </label>
+
+                <input id="mapbox://styles/mapbox/dark-v11" type="radio" name="rtoggle" value="Dark" checked="checked">
+                <label for="mapbox://styles/mapbox/dark-v11"> Dark  </label>
+            </div>
+        </div>
+        <div class="separator"></div>
+        <div class="menu">
+            <div id="heading" style="display: flex; padding:25px; justify-content: center;">
+                <img src="images/icon.png" alt="Symbol" width="70px", height="60px">
+                <h1 style="color : #aaa; "> HurriViz</h1>
+            </div>
+            <div class="separator" style="height:2px; "></div>
+            <div id="controls">
+                <div id="select-hutticane" style ="padding:20px; justify-content: center;">
+                    <label style ="color:#aaa;">Select a hurricane</label>
+                    <select id="dropdown">
+                        <option value="ALLEN">ALLEN</option>
+                        <option value="IOTA">IOTA</option>
+                        <option value="...">...</option>
+                        
+                    </select>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
