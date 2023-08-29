@@ -6,18 +6,22 @@
 </head>
 
 <body>
-
     <div class="container">
+        <!-- Main Map Container -->
         <div id="map-container" class="map-container">
             <div id="theme">
-                <input id="mapbox://styles/mapbox/light-v11" type="radio" name="rtoggle" value="Light" >
-                <label for="mapbox://styles/mapbox/light-v11">  Light </label>
-
-                <input id="mapbox://styles/mapbox/dark-v11" type="radio" name="rtoggle" value="Dark" checked="checked">
-                <label for="mapbox://styles/mapbox/dark-v11"> Dark  </label>
+                <input id="satellite-streets-v12" type="radio" name="rtoggle" value="satellite" checked="checked">
+                <label for="satellite-streets-v12">Satellite</label>
+                <input id="light-v11" type="radio" name="rtoggle" value="light">
+                <label for="light-v11">Light</label>
+                <input id="dark-v11" type="radio" name="rtoggle" value="dark">
+                <label for="dark-v11">Dark</label>
             </div>
         </div>
+
         <div class="separator"></div>
+
+        <!-- Right Side Menu Bar -->
         <div class="menu">
             <div id="heading" style="display: flex; padding:25px; justify-content: center;">
                 <img src="images/icon.png" alt="Symbol" width="70px", height="60px">
@@ -25,23 +29,25 @@
             </div>
             <div class="separator" style="height:2px; "></div>
             <div id="controls">
-                <div id="select-hutticane" style ="padding:20px; justify-content: center;">
-                    <label style ="color:#aaa;">Select a hurricane</label>
+                <div id="select-year" style ="padding:20px; justify-content: center;">
+                    <label style ="color:#aaa;">Select year</label>
                     <select id="dropdown">
-                        <option value="ALLEN">ALLEN</option>
-                        <option value="IOTA">IOTA</option>
-                        <option value="...">...</option>
-                        
+                        <option value="">--</option>
+                        <option value="2020">2020</option>
+                        <option value="2019">2019</option>
+                        <option value="2018">2018</option>
+                        <option value="2017">2017</option>
+                        <option value="2016">2016</option>
+                        <option value="2015">2015</option> 
                     </select>
                 </div>
 
-            </div>
+                <div id="hurricane-list-container" style="padding:20px;">
+                </div>
 
+            </div>
         </div>
     </div>
-
-
-
 
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
