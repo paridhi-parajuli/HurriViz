@@ -1,12 +1,20 @@
 import pandas as pd
-import os
 import geopandas as gpd
 from shapely.geometry import Point
+import geojson
+from shapely.geometry import LineString
 
 hur= pd.read_csv("HURDAT.csv") 
-geometry = [Point(lat, lon) for lat, lon in zip(hur['Lat'], hur['Lon'])] # not sure about (lat,lon) or (lon,lat)
+geometry = [Point(lon, lat) for lon, lat in zip(hur['Lon'], hur['Lat'])]
 geo_df = gpd.GeoDataFrame(hur, geometry=geometry, crs="EPSG:4326")
+geo_df.to_file("hurdat.geojson", driver='GeoJSON')
 
-parent_directory = os.path.dirname(os.path.abspath(__file__))
-data_folder_path = os.path.join(parent_directory, '..', 'data')
-geo_df.to_file(os.path.join(data_folder_path, 'hurdat.geojson'), driver='GeoJSON')
+def create_linestring(group):
+    if len(group) > 1:
+        return LineString(group.geometry.tolist())
+    else:
+        return None
+aggregated = geo_df.groupby(["Name", "Year"]).apply(create_linestring).reset_index()
+aggregated.rename(columns={0: "geometry"}, inplace=True)
+aggregated_gdf = gpd.GeoDataFrame(aggregated,  geometry="geometry", crs="EPSG:4326")
+aggregated_gdf.to_file("hurdat_line.geojson", driver='GeoJSON')
