@@ -113,7 +113,8 @@ dropdownYear.addEventListener('change', () => {
         source: 'hurdat_lines', 
         paint: {
           'line-color': 'white',
-          'line-width': 1
+          'line-width': 5,
+          'line-opacity': 0.5
         },
         filter: [
           'all', 
@@ -122,7 +123,61 @@ dropdownYear.addEventListener('change', () => {
         ]
       });
     }
+
+    map.on("click","hurricane-layer"+ year+hurrName, (e)=>{
+      const name = e.features[0].properties.Name; // id of the clicked state
+      const intensityWS = e.features[0].properties.Intensity_WS;
+      const intensityMSLP = e.features[0].properties.Intensity_MSLP;
+      const year = e.features[0].properties.Year;
+      const month = e.features[0].properties.Month;
+      const day =e.features[0].properties.Day;
+
+      const popup = new mapboxgl.Popup().setLngLat(e.lngLat);
+      //popup.setHTML(popupTemplate(name, intensityMSLP,intensityWS,year,month,day));
+      popup.setHTML(`<div>
+      <strong>${name} : ${year}/${month}/${day}</strong><ul>
+      <li>Total Damage :  $2M</li>
+      <li>Deaths : 40</li>
+      <li>ABC: 456</li>
+      </ul>
+      </div>`)
+      console.log("here", popup);
+      popup.addTo(map);
+
     });
+
+    map.on("click","hurricane-lines"+ year+hurrName, (e)=>{
+      const name = e.features[0].properties.Name; // id of the clicked state
+      const year = e.features[0].properties.Year;
+
+      const popup = new mapboxgl.Popup().setLngLat(e.lngLat);
+      //popup.setHTML(popupTemplate(name, intensityMSLP,intensityWS,year,month,day));
+      popup.setHTML(`<div>
+      <strong>${name} : ${year}/${month}/${day}</strong><ul>
+      <li>Total Damage :  $2M</li>
+      <li>Deaths : 40</li>
+      <li>ABC: 456</li>
+      </ul>
+      </div>`)
+      console.log("here", popup);
+      popup.addTo(map);
+
+    });
+  
+    map.on('mouseenter', "hurricane-lines"+ year+hurrName, () => {
+      map.setPaintProperty("hurricane-lines"+ year+hurrName, 'line-color', "yellow"); 
+      map.setPaintProperty("hurricane-lines"+ year+hurrName, 'line-width', 10); 
+      map.setPaintProperty("hurricane-lines"+ year+hurrName, 'line-opacity', 1); 
+    });
+    
+    map.on('mouseleave', "hurricane-lines"+ year+hurrName, () => {
+      map.setPaintProperty("hurricane-lines"+ year+hurrName, 'line-color', "white"); 
+      map.setPaintProperty("hurricane-lines"+ year+hurrName, 'line-width', 3.5); 
+      map.setPaintProperty("hurricane-lines"+ year+hurrName, 'line-opacity', 0.5); 
+    });
+
+    });
+
 
   })
   .catch(error => {
