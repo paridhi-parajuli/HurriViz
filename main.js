@@ -1,4 +1,5 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoicGFyaWRoaTEyIiwiYSI6ImNsaWMxcnRwejBnYXkzZG1ub21xbmxjdWcifQ.xfiUnCHe2s0IX5NeJ0qSxQ';
+var colorStops = ["#000000", "#222", "#ffc300", "#ff8d19", "#ff5733", "#ff2e00"]; 
 
 
 
@@ -41,6 +42,10 @@ map.on('style.load', () => {
       type: 'geojson',
       data: "data/hurdat_line.geojson"
     });
+    map.addSource('counties', {
+      type: 'geojson',
+      data: 'data/counties-data.geojson'
+    });
 
 
 
@@ -52,6 +57,7 @@ const themeList = document.getElementById('theme');
 const themeInputs = document.getElementsByTagName('input');
 const selectedYear = document.getElementById('select-year');
 const dropdownYear = document.getElementById('dropdown');
+const isSVI = document.getElementById("svi-checkbox");
 
 for (const input of themeInputs) {
   input.onclick = (layer) => {
@@ -59,6 +65,12 @@ for (const input of themeInputs) {
     map.setStyle('mapbox://styles/mapbox/' + layerId);
   };
 }
+
+map.loadImage('images/icon.png', (error, image) => {
+  if (error) throw error;
+
+  map.addImage('custom-icon', image); // Add the image to the map
+});
 
 
 dropdownYear.addEventListener('change', () => {
@@ -77,33 +89,55 @@ dropdownYear.addEventListener('change', () => {
     console.log(filteredHurr);
     filteredHurr.forEach(hurrName => {
       if (! map.getLayer('hurricane-layer' + year + hurrName)){
-      map.addLayer({
-        id: 'hurricane-layer' + year + hurrName,
-        type: 'circle',
-        source: 'hurdat', 
-        paint: {
-                
-          'circle-radius': [
-              'interpolate',
-              ['linear'],
-              ['get', 'Intensity_MSLP'], 
-              882.0, 2,
-              1024.0, 4
-          ],
-          'circle-color': [
-              'interpolate',
-              ['linear'],
-              ['get', 'Intensity_WS'], 
-              10.0, "blue",
-              165.0, "red"
+        map.addLayer({
+          id: 'hurricane-layer' + year + hurrName,
+          type: 'symbol', // Use 'symbol' instead of 'circle'
+          source: 'hurdat',
+          layout: {
+            'icon-image': 'custom-icon', // Use the custom icon you added
+            'icon-size': [
+                      'interpolate',
+                      ['linear'],
+                      ['get', 'Intensity_MSLP'], 
+                      882.0, 0.009,
+                      1024.0, 0.025
+                  ]
+
+
+          },
+          filter: [
+            'all',
+            ['==', 'Year', year],
+            ['==', 'Name', hurrName]
           ]
-        },
-        filter: [
-          'all', 
-          ['==', 'Year', year], 
-          ['==', 'Name', hurrName] 
-        ]
-      });
+        });
+      // map.addLayer({
+      //   id: 'hurricane-layer' + year + hurrName,
+      //   type: 'circle',
+      //   source: 'hurdat', 
+      //   paint: {
+                
+      //     'circle-radius': [
+      //         'interpolate',
+      //         ['linear'],
+      //         ['get', 'Intensity_MSLP'], 
+      //         882.0, 2,
+      //         1024.0, 4
+      //     ],
+      //     'circle-color': [
+      //         'interpolate',
+      //         ['linear'],
+      //         ['get', 'Intensity_WS'], 
+      //         10.0, "blue",
+      //         165.0, "red"
+      //     ]
+      //   },
+      //   filter: [
+      //     'all', 
+      //     ['==', 'Year', year], 
+      //     ['==', 'Name', hurrName] 
+      //   ]
+      // });
     }
 
       if (!map.getLayer('hurricane-lines' +year +hurrName)){
@@ -186,6 +220,35 @@ dropdownYear.addEventListener('change', () => {
 
 });
 
+
+isSVI.addEventListener("change", ()=>{
+  console.log("ok",isSVI.checked);
+  if (isSVI.checked){
+    map.addLayer({
+      id: 'svi',
+      type: 'fill',
+      source: 'counties',
+      paint: {
+        'fill-color': {
+          property: 'RPL_THEMES_2020',
+          stops: [
+              [0.100, colorStops[2]],
+              [0.30, colorStops[3]],
+              [0.60, colorStops[4]],
+              [1.0, colorStops[5]]
+          ]
+      } ,
+        'fill-opacity': 0.7
+      }
+    });
+  }
+  else{
+    if (map.getLayer("svi")){
+      map.removeLayer("svi");
+    }
+  }
+  
+});
 
 
 //whenever HTML window is refreshed, the default theme will be changed to
