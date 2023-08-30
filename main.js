@@ -1,6 +1,36 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoicGFyaWRoaTEyIiwiYSI6ImNsaWMxcnRwejBnYXkzZG1ub21xbmxjdWcifQ.xfiUnCHe2s0IX5NeJ0qSxQ';
 
 
+const container = document.querySelector('#cards-div');
+        // Fetch data from the JSON file
+        // TOOD: replace this
+        fetch('jsonData.json')
+            .then(response => response.json())
+            .then(jsonData => {
+                jsonData.forEach(cardData => {
+                    const cardDiv = document.createElement('div');
+                    cardDiv.classList.add('col-md-10', 'offset-md-1');
+
+                    const cardContent = `
+                <div class="card border-primary mb-3">
+                    <div class="card-header">${cardData.name}</div>
+                    <div class="card-body text-primary">
+                        ${cardData.details.replace('\n', '<br>')}
+                    </div>
+                </div>
+            `;
+
+                    cardDiv.innerHTML = cardContent;
+                    container.appendChild(cardDiv);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching JSON:', error);
+            });
+
+        // Set the height of hurricane cards div
+        const height = document.querySelector(".col-9").offsetHeight;
+        document.querySelector(".col-3").style.height = height + 'px';
 
 function filterDate(geojsonUrl, columnName, targetDate) {
   return fetch(geojsonUrl)
