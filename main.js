@@ -2,6 +2,36 @@ mapboxgl.accessToken = 'pk.eyJ1IjoicGFyaWRoaTEyIiwiYSI6ImNsaWMxcnRwejBnYXkzZG1ub
 var colorStops = ["#000000", "#222", "#ffc300", "#ff8d19", "#ff5733", "#ff2e00"]; 
 
 
+const container = document.querySelector('#cards-div');
+// Fetch data from the JSON file
+// TOOD: replace this
+fetch('jsonData.json')
+    .then(response => response.json())
+    .then(jsonData => {
+        jsonData.forEach(cardData => {
+            const cardDiv = document.createElement('div');
+            cardDiv.classList.add('col-md-10', 'offset-md-1');
+
+            const cardContent = `
+        <div class="card border-primary mb-3">
+            <div class="card-header">${cardData.name}</div>
+            <div class="card-body text-primary">
+                ${cardData.details.replace('\n', '<br>')}
+            </div>
+        </div>
+    `;
+
+            cardDiv.innerHTML = cardContent;
+            container.appendChild(cardDiv);
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching JSON:', error);
+    });
+
+// Set the height of hurricane cards div
+const height = document.querySelector(".col-9").offsetHeight;
+document.querySelector(".col-3").style.height = height + 'px';
 
 function filterDate(geojsonUrl, columnName, targetDate) {
   return fetch(geojsonUrl)
@@ -25,11 +55,21 @@ function filterDate(geojsonUrl, columnName, targetDate) {
 }
 
 
+
+
+
+
+
+
+
+
+
+
 const map = new mapboxgl.Map({
-    container: 'map',
-    style: "mapbox://styles/mapbox/satellite-streets-v12",
-    center: [-80.786052, 36.830348],
-    zoom: 3
+  container: 'map',
+  style: "mapbox://styles/mapbox/satellite-streets-v12",
+  center: [-80.786052, 36.830348],
+  zoom: 3
 });
 
 map.on('style.load', () => {
@@ -49,32 +89,30 @@ map.on('style.load', () => {
 
 
 
-}); 
+});
 
 
 // change theme based upon radio button selection
 const themeList = document.getElementById('theme');
 const themeInputs = document.getElementsByTagName('input');
-const selectedYear = document.getElementById('select-year');
 const dropdownYear = document.getElementById('dropdown');
 const isSVI = document.getElementById("svi-checkbox");
 
-for (const input of themeInputs) {
-  input.onclick = (layer) => {
-    const layerId = layer.target.id;
-    map.setStyle('mapbox://styles/mapbox/' + layerId);
-  };
-}
-
-map.loadImage('images/icon.png', (error, image) => {
-  if (error) throw error;
-
-  map.addImage('custom-icon', image); // Add the image to the map
-});
 
 
-dropdownYear.addEventListener('change', () => {
-  const year = parseInt(dropdownYear.value);
+
+
+
+
+
+
+
+
+
+
+
+
+function displayHurricanes(year) {
   const allLayers = map.getStyle().layers;
 
   // Remove previous layers
@@ -85,140 +123,105 @@ dropdownYear.addEventListener('change', () => {
     }
   });
   filterDate("data/hurdat.geojson", "Year", year)
-  .then(filteredHurr => {
-    console.log(filteredHurr);
-    filteredHurr.forEach(hurrName => {
-      if (! map.getLayer('hurricane-layer' + year + hurrName)){
-        map.addLayer({
-          id: 'hurricane-layer' + year + hurrName,
-          type: 'symbol', // Use 'symbol' instead of 'circle'
-          source: 'hurdat',
-          layout: {
-            'icon-image': 'custom-icon', // Use the custom icon you added
-            'icon-size': [
-                      'interpolate',
-                      ['linear'],
-                      ['get', 'Intensity_MSLP'], 
-                      882.0, 0.009,
-                      1024.0, 0.025
-                  ]
+    .then(filteredHurr => {
+      console.log(filteredHurr);
+      filteredHurr.forEach(hurrName => {
+        if (!map.getLayer('hurricane-layer' + year + hurrName)) {
+          map.addLayer({
+            id: 'hurricane-layer' + year + hurrName,
+            type: 'circle',
+            source: 'hurdat',
+            paint: {
 
+              'circle-radius': [
+                'interpolate',
+                ['linear'],
+                ['get', 'Intensity_MSLP'],
+                882.0, 2,
+                1024.0, 4
+              ],
+              'circle-color': [
+                'interpolate',
+                ['linear'],
+                ['get', 'Intensity_WS'],
+                10.0, "blue",
+                165.0, "red"
+              ]
+            },
+            filter: [
+              'all',
+              ['==', 'Year', year],
+              ['==', 'Name', hurrName]
+            ]
+          });
+        }
 
-          },
-          filter: [
-            'all',
-            ['==', 'Year', year],
-            ['==', 'Name', hurrName]
-          ]
+        if (!map.getLayer('hurricane-lines' + year + hurrName)) {
+          map.addLayer({
+            id: 'hurricane-lines' + year + hurrName,
+            type: 'line',
+            source: 'hurdat_lines',
+            paint: {
+              'line-color': 'white',
+              'line-width': 5,
+              'line-opacity': 0.5
+            },
+            filter: [
+              'all',
+              ['==', 'Year', year],
+              ['==', 'Name', hurrName]
+            ]
+          });
+        }
+
+        map.on("click", "hurricane-layer" + year + hurrName, (e) => {
+          const name = e.features[0].properties.Name; // id of the clicked state
+          const intensityWS = e.features[0].properties.Intensity_WS;
+          const intensityMSLP = e.features[0].properties.Intensity_MSLP;
+          const year = e.features[0].properties.Year;
+          const month = e.features[0].properties.Month;
+          const day = e.features[0].properties.Day;
+
+          const popup = new mapboxgl.Popup().setLngLat(e.lngLat);
+          //popup.setHTML(popupTemplate(name, intensityMSLP,intensityWS,year,month,day));
+          popup.setHTML(`<div>
+      <strong>${name} : ${year}/${month}/${day}</strong><ul>
+      <li>Total Damage :  $2M</li>
+      <li>Deaths : 40</li>
+      <li>ABC: 456</li>
+      </ul>
+      </div>`)
+          console.log("here", popup);
+          popup.addTo(map);
+
         });
-      // map.addLayer({
-      //   id: 'hurricane-layer' + year + hurrName,
-      //   type: 'circle',
-      //   source: 'hurdat', 
-      //   paint: {
-                
-      //     'circle-radius': [
-      //         'interpolate',
-      //         ['linear'],
-      //         ['get', 'Intensity_MSLP'], 
-      //         882.0, 2,
-      //         1024.0, 4
-      //     ],
-      //     'circle-color': [
-      //         'interpolate',
-      //         ['linear'],
-      //         ['get', 'Intensity_WS'], 
-      //         10.0, "blue",
-      //         165.0, "red"
-      //     ]
-      //   },
-      //   filter: [
-      //     'all', 
-      //     ['==', 'Year', year], 
-      //     ['==', 'Name', hurrName] 
-      //   ]
-      // });
-    }
 
-      if (!map.getLayer('hurricane-lines' +year +hurrName)){
-      map.addLayer({
-        id: 'hurricane-lines' +year +hurrName ,
-        type: 'line',
-        source: 'hurdat_lines', 
-        paint: {
-          'line-color': 'white',
-          'line-width': 5,
-          'line-opacity': 0.5
-        },
-        filter: [
-          'all', 
-          ['==', 'Year', year], 
-          ['==', 'Name', hurrName] 
-        ]
+
+
+        map.on('mouseenter', "hurricane-lines" + year + hurrName, () => {
+          map.setPaintProperty("hurricane-lines" + year + hurrName, 'line-color', "yellow");
+          map.setPaintProperty("hurricane-lines" + year + hurrName, 'line-width', 10);
+          map.setPaintProperty("hurricane-lines" + year + hurrName, 'line-opacity', 1);
+        });
+
+        map.on('mouseleave', "hurricane-lines" + year + hurrName, () => {
+          map.setPaintProperty("hurricane-lines" + year + hurrName, 'line-color', "white");
+          map.setPaintProperty("hurricane-lines" + year + hurrName, 'line-width', 3.5);
+          map.setPaintProperty("hurricane-lines" + year + hurrName, 'line-opacity', 0.5);
+        });
+
       });
-    }
 
-    map.on("click","hurricane-layer"+ year+hurrName, (e)=>{
-      const name = e.features[0].properties.Name; // id of the clicked state
-      const intensityWS = e.features[0].properties.Intensity_WS;
-      const intensityMSLP = e.features[0].properties.Intensity_MSLP;
-      const year = e.features[0].properties.Year;
-      const month = e.features[0].properties.Month;
-      const day =e.features[0].properties.Day;
 
-      const popup = new mapboxgl.Popup().setLngLat(e.lngLat);
-      //popup.setHTML(popupTemplate(name, intensityMSLP,intensityWS,year,month,day));
-      popup.setHTML(`<div>
-      <strong>${name} : ${year}/${month}/${day}</strong><ul>
-      <li>Total Damage :  $2M</li>
-      <li>Deaths : 40</li>
-      <li>ABC: 456</li>
-      </ul>
-      </div>`)
-      console.log("here", popup);
-      popup.addTo(map);
-
+    })
+    .catch(error => {
+      console.error('An error occurred:', error);
     });
-
-    map.on("click","hurricane-lines"+ year+hurrName, (e)=>{
-      const name = e.features[0].properties.Name; // id of the clicked state
-      const year = e.features[0].properties.Year;
-
-      const popup = new mapboxgl.Popup().setLngLat(e.lngLat);
-      //popup.setHTML(popupTemplate(name, intensityMSLP,intensityWS,year,month,day));
-      popup.setHTML(`<div>
-      <strong>${name} : ${year}/${month}/${day}</strong><ul>
-      <li>Total Damage :  $2M</li>
-      <li>Deaths : 40</li>
-      <li>ABC: 456</li>
-      </ul>
-      </div>`)
-      console.log("here", popup);
-      popup.addTo(map);
-
-    });
-  
-    map.on('mouseenter', "hurricane-lines"+ year+hurrName, () => {
-      map.setPaintProperty("hurricane-lines"+ year+hurrName, 'line-color', "yellow"); 
-      map.setPaintProperty("hurricane-lines"+ year+hurrName, 'line-width', 10); 
-      map.setPaintProperty("hurricane-lines"+ year+hurrName, 'line-opacity', 1); 
-    });
-    
-    map.on('mouseleave', "hurricane-lines"+ year+hurrName, () => {
-      map.setPaintProperty("hurricane-lines"+ year+hurrName, 'line-color', "white"); 
-      map.setPaintProperty("hurricane-lines"+ year+hurrName, 'line-width', 3.5); 
-      map.setPaintProperty("hurricane-lines"+ year+hurrName, 'line-opacity', 0.5); 
-    });
-
-    });
+}
 
 
-  })
-  .catch(error => {
-    console.error('An error occurred:', error);
-  });
 
-});
+
 
 
 isSVI.addEventListener("change", ()=>{
@@ -250,50 +253,25 @@ isSVI.addEventListener("change", ()=>{
   
 });
 
+//whenever HTML window is refreshed, display default select year hurricanes 
+window.onload = function () {
+  console.log("year is ",dropdownYear.value );
+  displayHurricanes(parseInt(dropdownYear.value));
+}
 
-//whenever HTML window is refreshed, the default theme will be changed to
-// satellite view 
-// window.onload = function(){
-//   map.setStyle('mapbox://styles/mapbox/satellite-streets-v12');
-// }
+//change theme based upon the selection
+for (const input of themeInputs) {
+  input.onclick = (layer) => {
+    const layerId = layer.target.id;
+    map.setStyle('mapbox://styles/mapbox/' + layerId);
+    displayHurricanes(parseInt(dropdownYear.value));
+  };
+}
 
 
-
-
-//load hurricane list on the side 
-selectedYear.onclick = (layer)=>{
-    var selectedYearValue=layer.target.value;
-    console.log(selectedYearValue);
-
-    cards = `
-        <div class="hurricane-card">
-          <div class="hurricane-card-content">
-            <span>Katrina</span>
-            <p>Year: 2005</p>
-          </div>
-        </div>
-
-        <div class="hurricane-card">
-          <div class="hurricane-card-content">
-            <span>Katrina</span>
-            <p>Year: 2005</p>
-          </div>
-        </div>
-
-        <div class="hurricane-card">
-          <div class="hurricane-card-content">
-            <span>Katrina</span>
-            <p>Year: 2005</p>
-          </div>
-        </div>
-
-        <div class="hurricane-card">
-          <div class="hurricane-card-content">
-            <span>Katrina</span>
-            <p>Year: 2005</p>
-          </div>
-        </div>
-    `
-
-    document.getElementById("hurricane-list-container").innerHTML=cards;
-};
+//plot new hurricanes when user select new year from the dropdown 
+dropdownYear.addEventListener('change', () => {
+  const year = parseInt(dropdownYear.value);
+  displayHurricanes(year);
+});
+    
