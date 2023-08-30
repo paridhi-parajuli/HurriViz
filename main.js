@@ -1,8 +1,5 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoicGFyaWRoaTEyIiwiYSI6ImNsaWMxcnRwejBnYXkzZG1ub21xbmxjdWcifQ.xfiUnCHe2s0IX5NeJ0qSxQ';
 
-
-
-
 function filterDate(geojsonUrl, columnName, targetDate) {
   return fetch(geojsonUrl)
     .then(response => response.json())
@@ -51,7 +48,6 @@ map.on('style.load', () => {
 // change theme based upon radio button selection
 const themeList = document.getElementById('theme');
 const themeInputs = document.getElementsByTagName('input');
-const selectedYear = document.getElementById('select-year');
 const dropdownYear = document.getElementById('dropdown');
 
 /*
@@ -185,56 +181,18 @@ window.onload = function () {
   displayHurricanes(parseInt(dropdownYear.value));
 }
 
+//change theme based upon the selection
 for (const input of themeInputs) {
   input.onclick = (layer) => {
     const layerId = layer.target.id;
     map.setStyle('mapbox://styles/mapbox/' + layerId);
+    displayHurricanes(parseInt(dropdownYear.value));
   };
 }
 
 
-
+//plot new hurricanes when user select new year from the dropdown 
 dropdownYear.addEventListener('change', () => {
   const year = parseInt(dropdownYear.value);
   displayHurricanes(year);
-
 });
-
-
-//load hurricane list on the side 
-selectedYear.onclick = (layer) => {
-  var selectedYearValue = layer.target.value;
-  console.log(selectedYearValue);
-
-  cards = `
-        <div class="hurricane-card">
-          <div class="hurricane-card-content">
-            <span>Katrina</span>
-            <p>Year: 2005</p>
-          </div>
-        </div>
-
-        <div class="hurricane-card">
-          <div class="hurricane-card-content">
-            <span>Katrina</span>
-            <p>Year: 2005</p>
-          </div>
-        </div>
-
-        <div class="hurricane-card">
-          <div class="hurricane-card-content">
-            <span>Katrina</span>
-            <p>Year: 2005</p>
-          </div>
-        </div>
-
-        <div class="hurricane-card">
-          <div class="hurricane-card-content">
-            <span>Katrina</span>
-            <p>Year: 2005</p>
-          </div>
-        </div>
-    `
-
-  document.getElementById("hurricane-list-container").innerHTML = cards;
-};
