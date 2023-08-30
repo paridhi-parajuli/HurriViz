@@ -91,6 +91,12 @@ map.on('style.load', () => {
 
 });
 
+map.loadImage('images/icon.png', (error, image) => {
+  if (error) throw error;
+
+  map.addImage('custom-icon', image); 
+});
+
 
 // change theme based upon radio button selection
 const themeList = document.getElementById('theme');
@@ -129,25 +135,35 @@ function displayHurricanes(year) {
         if (!map.getLayer('hurricane-layer' + year + hurrName)) {
           map.addLayer({
             id: 'hurricane-layer' + year + hurrName,
-            type: 'circle',
+            type: 'symbol',
             source: 'hurdat',
-            paint: {
-
-              'circle-radius': [
+            layout: {
+              'icon-image': 'custom-icon', 
+              'icon-size': [
                 'interpolate',
                 ['linear'],
                 ['get', 'Intensity_MSLP'],
-                882.0, 2,
-                1024.0, 4
-              ],
-              'circle-color': [
-                'interpolate',
-                ['linear'],
-                ['get', 'Intensity_WS'],
-                10.0, "blue",
-                165.0, "red"
-              ]
+                882.0, 0.01,
+                1024.0, 0.03
+              ] 
             },
+            // paint: {
+
+            //   'circle-radius': [
+            //     'interpolate',
+            //     ['linear'],
+            //     ['get', 'Intensity_MSLP'],
+            //     882.0, 2,
+            //     1024.0, 4
+            //   ],
+            //   'circle-color': [
+            //     'interpolate',
+            //     ['linear'],
+            //     ['get', 'Intensity_WS'],
+            //     10.0, "blue",
+            //     165.0, "red"
+            //   ]
+            // },
             filter: [
               'all',
               ['==', 'Year', year],
