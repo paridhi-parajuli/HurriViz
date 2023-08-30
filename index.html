@@ -1,56 +1,113 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>HurriViz</title>
-  <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+
+    <title>HurriViz</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>   
+
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div class="container">
-        <!-- Main Map Container -->
-        <div id="map-container" class="map-container">
-            <div id="theme">
-                <input id="satellite-streets-v12" type="radio" name="rtoggle" value="satellite" checked="checked">
-                <label for="satellite-streets-v12">Satellite</label>
-                <input id="light-v11" type="radio" name="rtoggle" value="light">
-                <label for="light-v11">Light</label>
-                <input id="dark-v11" type="radio" name="rtoggle" value="dark">
-                <label for="dark-v11">Dark</label>
-            </div>
-        </div>
-
-        <div class="separator"></div>
-
-        <!-- Right Side Menu Bar -->
-        <div class="menu">
-            <div id="heading" style="display: flex; padding:25px; justify-content: center;">
-                <img src="images/icon.png" alt="Symbol" width="70px", height="60px">
-                <h1 style="color : #aaa; "> HurriViz</h1>
-            </div>
-            <div class="separator" style="height:2px; "></div>
-            <div id="controls">
-                <div id="select-year" style ="padding:20px; justify-content: center;">
-                    <label style ="color:#aaa;">Select year</label>
-                    <select id="dropdown">
-                        <option value="">--</option>
-                        <option value="2020">2020</option>
-                        <option value="2019">2019</option>
-                        <option value="2018">2018</option>
-                        <option value="2017">2017</option>
-                        <option value="2016">2016</option>
-                        <option value="2015">2015</option> 
-                    </select>
+        <div class="row">
+                <div class="col-9">
+                        <!-- Main Map Container -->
+                        <div id="map">
+                            <div id="theme">
+                                <input id="satellite-streets-v12" type="radio" name="rtoggle" value="satellite" checked="checked">
+                                <label for="satellite-streets-v12">Satellite</label>
+                                <input id="light-v11" type="radio" name="rtoggle" value="light">
+                                <label for="light-v11">Light</label>
+                                <input id="dark-v11" type="radio" name="rtoggle" value="dark">
+                                <label for="dark-v11">Dark</label>
+                            </div>
+                        </div>
                 </div>
-
-                <div id="hurricane-list-container" style="padding:20px;">
-                </div>
-
+                <div class="col-3">
+                    <div class="row row-padding">
+                        <div class="col-12 nav-bar">
+                            <div id="heading" style="display: flex; padding:25px; justify-content: center;">
+                                <img src="images/icon.png" alt="Symbol" width="70px", height="60px">
+                                <h1 style="color : #aaa; "> HurriViz</h1>
+                            </div>
+                        </div> 
+                    </div>
+                    <div class="row row-padding">
+                        <div class="col-md-6 offset-md-3">
+                            <select class="form-select fw-bold" id="dropdown">
+                                <option value="2020" selected>2020</option>
+                                <option value="2019">2019</option>
+                                <option value="2018">2018</option>
+                                <option value="2017">2017</option>
+                            </select>
+                        </div>
+                    </div>
+                
+                    <div class="row">
+                        <div class="col-md-10 offset-md-1">
+                            <div class="card border-primary mb-3">
+                                <div class="card-header">Katrina</div>
+                                <div class="card-body text-primary">
+                                    CAT 4 | Windspeed: 100 kts
+                                    
+                                </div>
+                            </div>  
+                        </div>
+                        <div class="col-md-10 offset-md-1">
+                            <div class="card border-primary mb-3">
+                                <div class="card-header">Katrina</div>
+                                <div class="card-body text-primary">
+                                    CAT 4 | Windspeed: 100 kts
+                                </div>
+                            </div>  
+                        </div>
+                        <div class="col-md-10 offset-md-1">
+                            <div class="card border-primary mb-3">
+                                <div class="card-header">Katrina</div>
+                                <div class="card-body text-primary">
+                                    CAT 4 | Windspeed: 100 kts
+                                    <br>
+                                    2020 May
+                                </div>
+                            </div>  
+                        </div>
+                        <div class="col-md-10 offset-md-1">
+                            <div class="card border-primary mb-3">
+                                <div class="card-header">Katrina</div>
+                                <div class="card-body text-primary">
+                                    CAT 4 | Windspeed: 100 kts
+                                </div>
+                            </div>  
+                        </div>
+                        <div class="col-md-10 offset-md-1">
+                            <div class="card border-primary mb-3">
+                                <div class="card-header">Katrina</div>
+                                <div class="card-body text-primary">
+                                    CAT 4 | Windspeed: 100 kts
+                                </div>
+                            </div>  
+                        </div>
+                        <div class="col-md-10 offset-md-1">
+                            <div class="card border-primary mb-3">
+                                <div class="card-header">Katrina</div>
+                                <div class="card-body text-primary">
+                                    CAT 4 | Windspeed: 100 kts
+                                </div>
+                            </div>  
+                        </div>
+                    </div>
+                </div>        
             </div>
-        </div>
     </div>
-
-    <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+    
     <script src="main.js"></script>
+
 </body>
 </html>

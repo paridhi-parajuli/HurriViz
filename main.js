@@ -25,11 +25,11 @@ function filterDate(geojsonUrl, columnName, targetDate) {
 
 
 const map = new mapboxgl.Map({
-    container: 'map-container',
-    style: "mapbox://styles/mapbox/dark-v11",
+    container: 'map',
+    style: "mapbox://styles/mapbox/satellite-streets-v12",
     center: [-80.786052, 36.830348],
     zoom: 3
-  });
+});
 
 map.on('style.load', () => {
 
@@ -47,14 +47,18 @@ map.on('style.load', () => {
 }); 
 
 
-
-
 // change theme based upon radio button selection
 const themeList = document.getElementById('theme');
 const themeInputs = document.getElementsByTagName('input');
 const selectedYear = document.getElementById('select-year');
 const dropdownYear = document.getElementById('dropdown');
 
+for (const input of themeInputs) {
+  input.onclick = (layer) => {
+    const layerId = layer.target.id;
+    map.setStyle('mapbox://styles/mapbox/' + layerId);
+  };
+}
 
 
 dropdownYear.addEventListener('change', () => {
@@ -129,22 +133,13 @@ dropdownYear.addEventListener('change', () => {
 
 
 
-
-
-
 //whenever HTML window is refreshed, the default theme will be changed to
 // satellite view 
-window.onload = function(){
-  map.setStyle('mapbox://styles/mapbox/satellite-streets-v12');
-}
+// window.onload = function(){
+//   map.setStyle('mapbox://styles/mapbox/satellite-streets-v12');
+// }
 
 
-for (const input of themeInputs) {
-  input.onclick = (layer) => {
-  const layerId = layer.target.id;
-  map.setStyle('mapbox://styles/mapbox/' + layerId);
-};
-}
 
 
 //load hurricane list on the side 
