@@ -126,6 +126,8 @@ function displayHurricanes(year) {
           const month = e.features[0].properties.Month;
           const day = e.features[0].properties.Day;
 
+          console.log("features", e.features[0].properties)
+
           const popup = new mapboxgl.Popup().setLngLat(e.lngLat);
           //popup.setHTML(popupTemplate(name, intensityMSLP,intensityWS,year,month,day));
           popup.setHTML(`<div>
