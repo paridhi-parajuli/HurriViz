@@ -92,20 +92,3 @@ body, html{
 .card-header:hover i.fas {
   transform: rotate(270deg);
 }
-
-/* Rotate tornado icon*/
-.rotating-marker {
-      animation: rotate 0.3s linear infinite;
-      transform-origin: center center;
-      backface-visibility: hidden;
-      perspective: 1000px;
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}

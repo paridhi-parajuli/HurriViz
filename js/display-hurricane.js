@@ -58,6 +58,7 @@ function displayHurricanes(year) {
   });
   filterDate("data/hurdat.geojson", "Year", year)
     .then(filteredHurr => {
+      console.log(filteredHurr);
       filteredHurr.forEach(hurrName => {
         if (!map.getLayer('hurricane-layer' + year + hurrName)) {
           map.addLayer({
@@ -124,8 +125,6 @@ function displayHurricanes(year) {
           const year = e.features[0].properties.Year;
           const month = e.features[0].properties.Month;
           const day = e.features[0].properties.Day;
-
-          console.log("features", e.features[0].properties)
 
           const popup = new mapboxgl.Popup().setLngLat(e.lngLat);
           //popup.setHTML(popupTemplate(name, intensityMSLP,intensityWS,year,month,day));
