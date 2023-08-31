@@ -58,7 +58,6 @@ function displayHurricanes(year) {
   });
   filterDate("data/hurdat.geojson", "Year", year)
     .then(filteredHurr => {
-      console.log(filteredHurr);
       filteredHurr.forEach(hurrName => {
         if (!map.getLayer('hurricane-layer' + year + hurrName)) {
           map.addLayer({

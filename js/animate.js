@@ -2,52 +2,66 @@
 This script controls the animation of hurricanes
 along its own trajectory. 
 */
-const delay = ms => new Promise(res => setTimeout(res, ms));
 
-
-const animateHurricane = () => {
-    delay(500);
-    map.getLayer('hurricane-lines2020CRISTOBAL');
-
-    // console.log(filterDate("data/hurdat.geojson", "Year", 2020))
+// animateHurricane animates a hurricane along its own trajectory
+// given the name and year of that hurricane 
+const animateHurricane = (name, year) => {
 
     fetch("data/hurdat_line.geojson")
         .then(resp => resp.json())
         .then(geojsonData => {
             const filteredFeatures = geojsonData.features.filter(feature => {
-                return feature.properties["Name"] === "CRISTOBAL";
+                return feature.properties["Name"] == name;
             });
             return filteredFeatures;
-        }).then(lineString => {
-            console.log(lineString);
+        })
+        .then(filteredFeatures => {
+            for (const feature of filteredFeatures) {
+                if (feature.properties["Year"] === year) {
+                    return feature;
+                }
+            }
+        })
+        .then(lineString => {
+            console.log("line string", lineString);
 
             const marker = new mapboxgl.Marker()
-                .setLngLat(lineString[3].geometry.coordinates[0])
+                .setLngLat(lineString.geometry.coordinates[0])
                 .addTo(map);
 
-            marker.getElement().innerHTML = '<img src="images/tornado.png" style="width: 30px; height: 30px;">';
+            marker.getElement().innerHTML = '<img src="images/tornado.png" style="width: 30px; height: 30px;" class="rotating-marker">';
 
             function animateMarker() {
                 let i = 0;
 
-                const numPoints = lineString[3].geometry.coordinates.length;
+                var markerActive = true;
+
+                const numPoints = lineString.geometry.coordinates.length;
 
                 function moveMarker() {
-                    marker.setLngLat(lineString[3].geometry.coordinates[i]);
+                    marker.setLngLat(lineString.geometry.coordinates[i]);
                     i++;
                     if (i <= numPoints) {
                         setTimeout(() => {
                             window.requestAnimationFrame(moveMarker);
-                        }, 150);
+                        }, 200);
+                    } else {
+                        markerActive = false;
                     }
                 }
                 moveMarker();
             }
 
             animateMarker();
+
+            setTimeout(() => {
+                marker.remove(); //TODO: temp fix, need to fix properly later
+            }, 10000);
         })
 
 
 }
 
-animateHurricane();
+const hurricaneName = "CRISTOBAL";
+const year = 2020;
+animateHurricane(hurricaneName, year);
