@@ -83,3 +83,12 @@ body, html{
   margin: 1px 0;
   flex-basis: 100%;
 }
+
+.card-header {
+  cursor: pointer;
+}
+
+ /* TODO: better than this */
+.card-header:hover i.fas {
+  transform: rotate(270deg);
+}
