@@ -1,63 +1,4 @@
-mapboxgl.accessToken = 'pk.eyJ1IjoicGFyaWRoaTEyIiwiYSI6ImNsaWMxcnRwejBnYXkzZG1ub21xbmxjdWcifQ.xfiUnCHe2s0IX5NeJ0qSxQ';
-var colorStops = ["#000000", "#222", "#ffc300", "#ff8d19", "#ff5733", "#ff2e00"]; 
-
-
-const container = document.querySelector('#cards-div');
-// Fetch data from the JSON file
-// TOOD: replace this
-fetch('jsonData.json')
-    .then(response => response.json())
-    .then(jsonData => {
-        jsonData.forEach((cardData, index) => {
-            const cardDiv = document.createElement('div');
-            cardDiv.classList.add('col-md-10', 'offset-md-1');
-
-            const cardContent = `
-            <div class="card border-primary mb-3">
-            <div class="card-header" data-bs-toggle="collapse" data-bs-target="#collapse${index}">
-                ${cardData.name}
-                <i class="fas fa-chevron-down float-right"></i>
-            </div>
-            <div class="card-body text-primary">
-                ${cardData.details.replace('\n', '<br>')}
-            </div>
-            <div class="collapse" id="collapse${index}">
-                <div class="card-body">
-                    <form>
-                        <div class="mb-3">
-                            <label for="windValue${index}" class="form-label">Wind Value</label>
-                            <input type="text" class="form-control" id="windValue${index}" placeholder="Enter wind value">
-                        </div>
-                        <div class="mb-3">
-                            <label for="categoryDropdown${index}" class="form-label">Category</label>
-                            <select class="form-select" id="categoryDropdown${index}">
-                                <option selected>Choose category...</option>
-                                <option value="1">Category 1</option>
-                                <option value="2">Category 2</option>
-                                <option value="3">Category 3</option>
-                                <!-- Add other categories as needed -->
-                            </select>
-                        </div>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#iframeModal">Show Plot</button>
-
-                    </form>
-                </div>
-            </div>
-        </div>
-    `;
-
-
-            cardDiv.innerHTML = cardContent;
-            container.appendChild(cardDiv);
-        });
-    })
-    .catch(error => {
-        console.error('Error fetching JSON:', error);
-    });
-
-// Set the height of hurricane cards div
-const height = document.querySelector(".col-9").offsetHeight;
-document.querySelector(".col-3").style.height = height + 'px';
+var colorStops = ["#000000", "#222", "#ffc300", "#ff8d19", "#ff5733", "#ff2e00"];
 
 function filterDate(geojsonUrl, columnName, targetDate) {
   return fetch(geojsonUrl)
@@ -80,69 +21,30 @@ function filterDate(geojsonUrl, columnName, targetDate) {
     });
 }
 
-
-
-
-
-
-
-
-
-
-
-
-const map = new mapboxgl.Map({
-  container: 'map',
-  style: "mapbox://styles/mapbox/satellite-streets-v12",
-  center: [-80.786052, 36.830348],
-  zoom: 3
-});
-
 map.on('style.load', () => {
 
-    map.addSource('hurdat', {
-        type: 'geojson',
-        data: 'data/hurdat.geojson'
-      });
-    map.addSource('hurdat_lines', {
-      type: 'geojson',
-      data: "data/hurdat_line.geojson"
-    });
-    map.addSource('counties', {
-      type: 'geojson',
-      data: 'data/counties-data.geojson'
-    });
-
-
-
+  map.addSource('hurdat', {
+    type: 'geojson',
+    data: 'data/hurdat.geojson'
+  });
+  map.addSource('hurdat_lines', {
+    type: 'geojson',
+    data: "data/hurdat_line.geojson"
+  });
+  map.addSource('counties', {
+    type: 'geojson',
+    data: 'data/counties-data.geojson'
+  });
 });
 
 map.loadImage('images/icon.png', (error, image) => {
   if (error) throw error;
 
-  map.addImage('custom-icon', image); 
+  map.addImage('custom-icon', image);
 });
 
 
-// change theme based upon radio button selection
-const themeList = document.getElementById('theme');
-const themeInputs = document.getElementsByTagName('input');
 const dropdownYear = document.getElementById('dropdown');
-const isSVI = document.getElementById("svi-checkbox");
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function displayHurricanes(year) {
   const allLayers = map.getStyle().layers;
@@ -164,14 +66,14 @@ function displayHurricanes(year) {
             type: 'symbol',
             source: 'hurdat',
             layout: {
-              'icon-image': 'custom-icon', 
+              'icon-image': 'custom-icon',
               'icon-size': [
                 'interpolate',
                 ['linear'],
                 ['get', 'Intensity_MSLP'],
                 882.0, 0.01,
                 1024.0, 0.03
-              ] 
+              ]
             },
             // paint: {
 
@@ -261,59 +163,13 @@ function displayHurricanes(year) {
     });
 }
 
-
-
-
-
-
-isSVI.addEventListener("change", ()=>{
-  console.log("ok",isSVI.checked);
-  if (isSVI.checked){
-    map.addLayer({
-      id: 'svi',
-      type: 'fill',
-      source: 'counties',
-      paint: {
-        'fill-color': {
-          property: 'RPL_THEMES_2020',
-          stops: [
-              [0.100, colorStops[2]],
-              [0.30, colorStops[3]],
-              [0.60, colorStops[4]],
-              [1.0, colorStops[5]]
-          ]
-      } ,
-        'fill-opacity': 0.7
-      }
-    });
-  }
-  else{
-    if (map.getLayer("svi")){
-      map.removeLayer("svi");
-    }
-  }
-  
-});
-
 //whenever HTML window is refreshed, display default select year hurricanes 
 window.onload = function () {
-  console.log("year is ",dropdownYear.value );
   displayHurricanes(parseInt(dropdownYear.value));
 }
 
-//change theme based upon the selection
-for (const input of themeInputs) {
-  input.onclick = (layer) => {
-    const layerId = layer.target.id;
-    map.setStyle('mapbox://styles/mapbox/' + layerId);
-    displayHurricanes(parseInt(dropdownYear.value));
-  };
-}
-
-
 //plot new hurricanes when user select new year from the dropdown 
 dropdownYear.addEventListener('change', () => {
-  const year = parseInt(dropdownYear.value);
-  displayHurricanes(year);
+  displayHurricanes(parseInt(dropdownYear.value));
 });
-    
+
