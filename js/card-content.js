@@ -36,7 +36,7 @@ fetch('data/jsonData.json')
                                 <div class="mb-3">
                                     <label for="categoryDropdown${index}" class="form-label">Category</label>
                                     <select class="form-select" id="categoryDropdown${index}"name="category" required>
-                                        <option selected>Choose category...</option>
+                                        <option value="" selected>Choose category...</option>
                                         <option value="1">Category 1</option>
                                         <option value="2">Category 2</option>
                                         <option value="3">Category 3</option>
