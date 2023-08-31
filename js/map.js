@@ -4,6 +4,7 @@ const map = new mapboxgl.Map({
     container: 'map',
     style: "mapbox://styles/mapbox/satellite-streets-v12",
     center: [-80.786052, 36.830348],
+    pitch: 55,
     zoom: 3
 });
 
