@@ -1,4 +1,5 @@
 var colorStops = ["#000000", "#222", "#ffc300", "#ff8d19", "#ff5733", "#ff2e00"];
+var popup;
 
 function filterDate(geojsonUrl, columnName, targetDate) {
   return fetch(geojsonUrl)
@@ -60,45 +61,6 @@ function displayHurricanes(year) {
     .then(filteredHurr => {
       console.log(filteredHurr);
       filteredHurr.forEach(hurrName => {
-        if (!map.getLayer('hurricane-layer' + year + hurrName)) {
-          map.addLayer({
-            id: 'hurricane-layer' + year + hurrName,
-            type: 'symbol',
-            source: 'hurdat',
-            layout: {
-              'icon-image': 'custom-icon',
-              'icon-size': [
-                'interpolate',
-                ['linear'],
-                ['get', 'Intensity_MSLP'],
-                882.0, 0.01,
-                1024.0, 0.03
-              ]
-            },
-            // paint: {
-
-            //   'circle-radius': [
-            //     'interpolate',
-            //     ['linear'],
-            //     ['get', 'Intensity_MSLP'],
-            //     882.0, 2,
-            //     1024.0, 4
-            //   ],
-            //   'circle-color': [
-            //     'interpolate',
-            //     ['linear'],
-            //     ['get', 'Intensity_WS'],
-            //     10.0, "blue",
-            //     165.0, "red"
-            //   ]
-            // },
-            filter: [
-              'all',
-              ['==', 'Year', year],
-              ['==', 'Name', hurrName]
-            ]
-          });
-        }
 
         if (!map.getLayer('hurricane-lines' + year + hurrName)) {
           map.addLayer({
@@ -107,8 +69,14 @@ function displayHurricanes(year) {
             source: 'hurdat_lines',
             paint: {
               'line-color': 'white',
-              'line-width': 5,
-              'line-opacity': 0.5
+              'line-width': {
+                'base': 1,
+                'stops': [
+                [3, 3],
+                [10, 12]
+                ]
+                },
+              'line-opacity': 0.8
             },
             filter: [
               'all',
@@ -118,18 +86,79 @@ function displayHurricanes(year) {
           });
         }
 
-        map.on("click", "hurricane-layer" + year + hurrName, (e) => {
-          const name = e.features[0].properties.Name; // id of the clicked state
+
+        if (!map.getLayer('hurricane-layer' + year + hurrName)) {
+
+
+
+          
+          map.addLayer({
+            id: 'hurricane-layer' + year + hurrName,
+            type: 'circle',
+            source: 'hurdat',
+            // layout: {
+            //   'icon-image': 'custom-icon',
+            //   'icon-size': [
+            //     'interpolate',
+            //     ['linear'],
+            //     ['get', 'Intensity_MSLP'],
+            //     882.0, 0.01,
+            //     1024.0, 0.03
+            //   ]
+            // },
+            paint: {
+              'circle-color': [
+                'match',
+                ['get', 'Intensity_Cat'],
+                'TD', 'lightblue',   // Light color for 'TD'
+                'TS', 'blue',        // Blue color for 'TS' (you can adjust the color)
+                'Cat1', 'red',       // Red color for 'Cat1'
+                'Cat2', 'darkred',   // Dark red color for 'Cat2'
+                'Cat3', 'darkred',   // Dark red color for 'Cat3'
+                'Cat4', 'darkred',   // Dark red color for 'Cat4'
+                'Cat5', 'darkred',   // Dark red color for 'Cat5'
+                'gray'               // Default color for other values
+              ],
+
+              'circle-radius': {
+                'base': 1.75,
+                'stops': [
+                [3, 2],
+                [10, 50]
+                ]
+                },
+            //   'circle-color': [
+            //     'interpolate',
+            //     ['linear'],
+            //     ['get', 'Intensity_WS'],
+            //     10.0, "blue",
+            //     165.0, "red"
+            //   ]
+            },
+            filter: [
+              'all',
+              ['==', 'Year', year],
+              ['==', 'Name', hurrName]
+            ]
+          });
+        }
+
+
+
+        map.on("mouseenter", "hurricane-layer" + year + hurrName, (e) => {
+          const name = e.features[0].properties.Name; 
           const intensityWS = e.features[0].properties.Intensity_WS;
           const intensityMSLP = e.features[0].properties.Intensity_MSLP;
+          const cat = e.features[0].properties.Intensity_Cat;
           const year = e.features[0].properties.Year;
           const month = e.features[0].properties.Month;
           const day = e.features[0].properties.Day;
 
-          const popup = new mapboxgl.Popup().setLngLat(e.lngLat);
+          popup = new mapboxgl.Popup({closeButton: false}).setLngLat(e.lngLat);
           //popup.setHTML(popupTemplate(name, intensityMSLP,intensityWS,year,month,day));
           popup.setHTML(`<div>
       <strong>${name} : ${year}/${month}/${day}</strong><ul>
+      <li>Category :  ${cat}</li>
       <li>Total Damage :  $2M</li>
       <li>Deaths : 40</li>
       <li>ABC: 456</li>
@@ -139,6 +168,13 @@ function displayHurricanes(year) {
           popup.addTo(map);
 
         });
+        map.on("mouseleave", "hurricane-layer"+ year+hurrName, ()=>{
+          if (popup){
+            popup.remove();
+          }
+        });
+      
+      
 
 
 
