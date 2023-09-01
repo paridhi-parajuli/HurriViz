@@ -93,7 +93,7 @@ map.on('style.load', () => {
 
 });
 
-map.loadImage('images/icon.png', (error, image) => {
+map.loadImage('images/tornado.png', (error, image) => {
   if (error) throw error;
 
   map.addImage('custom-icon', image);
@@ -130,7 +130,7 @@ function displayHurricanes(year) {
                   [10, 12]
                 ]
               },
-              'line-opacity': 0.8
+              'line-opacity': 0.4
             },
             filter: [
               'all',
@@ -148,39 +148,46 @@ function displayHurricanes(year) {
 
           map.addLayer({
             id: 'hurricane-layer' + year + hurrName,
-            type: 'circle',
+            type: 'symbol',
             source: 'hurdat',
-            // layout: {
-            //   'icon-image': 'custom-icon',
-            //   'icon-size': [
-            //     'interpolate',
-            //     ['linear'],
-            //     ['get', 'Intensity_MSLP'],
-            //     882.0, 0.01,
-            //     1024.0, 0.03
-            //   ]
-            // },
-            paint: {
-              'circle-color': [
-                'match',
-                ['get', 'Intensity_Cat'],
-                'TD', 'lightblue',   // Light color for 'TD'
-                'TS', 'blue',        // Blue color for 'TS' (you can adjust the color)
-                'Cat1', 'red',       // Red color for 'Cat1'
-                'Cat2', 'darkred',   // Dark red color for 'Cat2'
-                'Cat3', 'darkred',   // Dark red color for 'Cat3'
-                'Cat4', 'darkred',   // Dark red color for 'Cat4'
-                'Cat5', 'darkred',   // Dark red color for 'Cat5'
-                'gray'               // Default color for other values
+            layout: {
+              'icon-image': 'custom-icon',
+              'icon-size': [
+                'interpolate',
+                ['linear'],
+                ['get', 'Intensity_MSLP'],
+                882.0, 0.01,
+                1024.0, 0.03
               ],
+              'icon-size': {
+                  'base': 0.01,
+                  'stops': [
+                    [3, 0.02],
+                    [10, 0.08]
+                  ]
+                },
+            },
+            paint: {
+              // 'circle-color': [
+              //   'match',
+              //   ['get', 'Intensity_Cat'],
+              //   'TD', 'lightblue',   // Light color for 'TD'
+              //   'TS', 'blue',        // Blue color for 'TS' (you can adjust the color)
+              //   'Cat1', 'red',       // Red color for 'Cat1'
+              //   'Cat2', 'darkred',   // Dark red color for 'Cat2'
+              //   'Cat3', 'darkred',   // Dark red color for 'Cat3'
+              //   'Cat4', 'darkred',   // Dark red color for 'Cat4'
+              //   'Cat5', 'darkred',   // Dark red color for 'Cat5'
+              //   'gray'               // Default color for other values
+              // ],
 
-              'circle-radius': {
-                'base': 1.75,
-                'stops': [
-                  [3, 2],
-                  [10, 50]
-                ]
-              },
+              // 'circle-radius': {
+              //   'base': 1.75,
+              //   'stops': [
+              //     [3, 2],
+              //     [10, 50]
+              //   ]
+              // },
               //   'circle-color': [
               //     'interpolate',
               //     ['linear'],
