@@ -62,6 +62,35 @@ map.on('style.load', () => {
     data: 'data/counties-data.geojson'
   });
 
+  // map.addSource('ndvi_pre', {
+  //   type: 'geojson',
+  //   data: 'data/NDVI_pre.geojson'
+  // });
+
+  // map.addLayer({
+  //   id: "ndvi_pre",
+  //   type: 'circle',
+  //   source: 'ndvi_pre',
+
+  //     'circle-radius':0.01,// {
+  //     //   'base': 0.2,
+  //     //   'stops': [
+  //     //   [3, 0.5],
+  //     //   [10, 2]
+  //     //   ]
+  //     //   },
+  //      'circle-color': "red"//[
+  //     //   'interpolate',
+  //     //   ['linear'],
+  //     //   ['get', 'NDVI'],
+  //     //   -1.0, "blue",
+  //     //   1.0, "red"
+  //     // ]
+  //   });
+  
+
+
+
 });
 
 map.loadImage('images/icon.png', (error, image) => {
@@ -97,10 +126,10 @@ function displayHurricanes(year) {
               'line-width': {
                 'base': 1,
                 'stops': [
-                [3, 3],
-                [10, 12]
+                  [3, 3],
+                  [10, 12]
                 ]
-                },
+              },
               'line-opacity': 0.8
             },
             filter: [
@@ -113,7 +142,10 @@ function displayHurricanes(year) {
 
 
         if (!map.getLayer('hurricane-layer' + year + hurrName)) {
-          
+
+
+
+
           map.addLayer({
             id: 'hurricane-layer' + year + hurrName,
             type: 'circle',
@@ -145,17 +177,17 @@ function displayHurricanes(year) {
               'circle-radius': {
                 'base': 1.75,
                 'stops': [
-                [3, 2],
-                [10, 50]
+                  [3, 2],
+                  [10, 50]
                 ]
-                },
-            //   'circle-color': [
-            //     'interpolate',
-            //     ['linear'],
-            //     ['get', 'Intensity_WS'],
-            //     10.0, "blue",
-            //     165.0, "red"
-            //   ]
+              },
+              //   'circle-color': [
+              //     'interpolate',
+              //     ['linear'],
+              //     ['get', 'Intensity_WS'],
+              //     10.0, "blue",
+              //     165.0, "red"
+              //   ]
             },
             filter: [
               'all',
@@ -164,9 +196,11 @@ function displayHurricanes(year) {
             ]
           });
         }
+
         var popup;
+
         map.on("mouseenter", "hurricane-layer" + year + hurrName, (e) => {
-          const name = e.features[0].properties.Name; 
+          const name = e.features[0].properties.Name;
           const intensityWS = e.features[0].properties.Intensity_WS;
           const intensityMSLP = e.features[0].properties.Intensity_MSLP;
           const cat = e.features[0].properties.Intensity_Cat;
@@ -191,11 +225,15 @@ function displayHurricanes(year) {
           popup.addTo(map);
 
         });
-        map.on("mouseleave", "hurricane-layer"+ year+hurrName, ()=>{
-          if (popup){
+        map.on("mouseleave", "hurricane-layer" + year + hurrName, () => {
+          if (popup) {
             popup.remove();
           }
         });
+
+
+
+
 
         map.on('mouseenter', "hurricane-lines" + year + hurrName, () => {
           map.setPaintProperty("hurricane-lines" + year + hurrName, 'line-color', "yellow");
