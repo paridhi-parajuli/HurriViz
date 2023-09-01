@@ -63,26 +63,6 @@ function renderCardsForYear(year) {
                         <div class="card-body">
                             <form id="dataForm">
                                 <input type="hidden" name="cardIndex" value="${index}">
-                                <div class="mb-3">
-                                    <label for="windValue${index}" class="form-label">Wind Value</label>
-                                    <input type="text" class="form-control" name="windValue" id="windValue${index}" placeholder="Enter wind value" required pattern="^[0-9]*\.?[0-9]*$">
-                                    <div class="invalid-feedback">
-                                        Please enter a valid wind value (numbers only).
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="categoryDropdown${index}" class="form-label">Category</label>
-                                    <select class="form-select" id="categoryDropdown${index}"name="category" required>
-                                        <option value="" selected>Choose category...</option>
-                                        <option value="1">Category 1</option>
-                                        <option value="2">Category 2</option>
-                                        <option value="3">Category 3</option>
-                                        <!-- Add other categories as needed -->
-                                    </select>
-                                    <div class="invalid-feedback">
-                                        Please choose a category.
-                                    </div>
-                                </div>
                                 <button type="submit" class="submit-button btn btn-primary" data-index="${index}">Show Plot</button>
                             </form>
                         </div>
@@ -106,24 +86,20 @@ function renderCardsForYear(year) {
         const form = event.target.closest('.card').querySelector('form');
         const formData = new FormData(form);
 
-        if (form.checkValidity()) {
+        const cardIndexInput = form.querySelector('input[name="cardIndex"]');
+        const indexValue = cardIndexInput ? cardIndexInput.value : null;
 
-            fetch('http://127.0.0.1:5000/data', {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                    const modalInstance = new bootstrap.Modal(document.getElementById('iframeModal'));
-                    modalInstance.show();
+        if (indexValue) {
+            const selectedName = filteredData[indexValue].properties.Name;
+            const selectedYear = filteredData[indexValue].properties.Year;
 
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        } else {
-            form.classList.add('was-validated');
+            // Now, use these to set the iframe's source:
+            const iframeSrc = `data/templates/${selectedYear}/${selectedYear}_${selectedName}.html`;
+            document.querySelector("#iframeModal iframe").src = iframeSrc;
+
+            // Finally, show the modal:
+            const modal = new bootstrap.Modal(document.getElementById('iframeModal'));
+            modal.show();
         }
     }
 }
