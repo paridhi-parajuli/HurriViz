@@ -62,6 +62,35 @@ map.on('style.load', () => {
     data: 'data/counties-data.geojson'
   });
 
+  map.addSource('ndvi_pre', {
+    type: 'geojson',
+    data: 'data/NDVI_pre.geojson'
+  });
+
+  map.addLayer({
+    id: "ndvi_pre",
+    type: 'circle',
+    source: 'ndvi_pre',
+
+      'circle-radius':0.01,// {
+      //   'base': 0.2,
+      //   'stops': [
+      //   [3, 0.5],
+      //   [10, 2]
+      //   ]
+      //   },
+       'circle-color': "red"//[
+      //   'interpolate',
+      //   ['linear'],
+      //   ['get', 'NDVI'],
+      //   -1.0, "blue",
+      //   1.0, "red"
+      // ]
+    });
+  
+
+
+
 });
 
 map.loadImage('images/icon.png', (error, image) => {
