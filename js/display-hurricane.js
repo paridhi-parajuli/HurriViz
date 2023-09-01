@@ -1,5 +1,5 @@
 var colorStops = ["#000000", "#222", "#ffc300", "#ff8d19", "#ff5733", "#ff2e00"];
-var popup;
+
 
 function filterDate(geojsonUrl, columnName, targetDate) {
   return fetch(geojsonUrl)
@@ -22,6 +22,31 @@ function filterDate(geojsonUrl, columnName, targetDate) {
     });
 }
 
+function removeOtherHurricanes(hurrName,year, e){
+      const allLayers = map.getStyle().layers;
+      selectedLine = "hurricane-lines"+year+hurrName;
+      selectedPoints = "hurricane-layer"+year+hurrName;
+      allLayers.forEach(layer => {
+        const layerIdSubstring = layer.id.substring(0, 15);
+        if ((layerIdSubstring === "hurricane-lines") && (layer.id != selectedLine)) {
+          map.removeLayer(layer.id);
+        }
+        if ((layerIdSubstring === "hurricane-layer") && (layer.id != selectedPoints)) {
+          map.removeLayer(layer.id);
+        }});
+      
+        map.flyTo({
+          center: [e.lngLat.lng, e.lngLat.lat],
+          zoom: 8,
+          speed: 1.5,
+          pitch: 80,
+          bearing: 0,
+          essential: true, 
+        });
+      
+
+}
+
 map.on('style.load', () => {
 
   map.addSource('hurdat', {
@@ -36,6 +61,7 @@ map.on('style.load', () => {
     type: 'geojson',
     data: 'data/counties-data.geojson'
   });
+
 });
 
 map.loadImage('images/icon.png', (error, image) => {
@@ -87,9 +113,6 @@ function displayHurricanes(year) {
 
 
         if (!map.getLayer('hurricane-layer' + year + hurrName)) {
-
-
-
           
           map.addLayer({
             id: 'hurricane-layer' + year + hurrName,
@@ -141,9 +164,7 @@ function displayHurricanes(year) {
             ]
           });
         }
-
-
-
+        var popup;
         map.on("mouseenter", "hurricane-layer" + year + hurrName, (e) => {
           const name = e.features[0].properties.Name; 
           const intensityWS = e.features[0].properties.Intensity_WS;
@@ -153,9 +174,12 @@ function displayHurricanes(year) {
           const month = e.features[0].properties.Month;
           const day = e.features[0].properties.Day;
 
-          popup = new mapboxgl.Popup({closeButton: false}).setLngLat(e.lngLat);
+          popup = new mapboxgl.Popup({closeButton: false,className: 'custom-popup'}).setLngLat(e.lngLat);
           //popup.setHTML(popupTemplate(name, intensityMSLP,intensityWS,year,month,day));
-          popup.setHTML(`<div>
+          popup.setHTML(`
+          
+            
+          <div>
       <strong>${name} : ${year}/${month}/${day}</strong><ul>
       <li>Category :  ${cat}</li>
       <li>Total Damage :  $2M</li>
@@ -172,10 +196,6 @@ function displayHurricanes(year) {
             popup.remove();
           }
         });
-      
-      
-
-
 
         map.on('mouseenter', "hurricane-lines" + year + hurrName, () => {
           map.setPaintProperty("hurricane-lines" + year + hurrName, 'line-color', "yellow");
@@ -189,6 +209,8 @@ function displayHurricanes(year) {
           map.setPaintProperty("hurricane-lines" + year + hurrName, 'line-opacity', 0.5);
         });
 
+        map.on("click","hurricane-lines"+year+hurrName, (e)=> removeOtherHurricanes(hurrName,year,e) );
+        
       });
 
 
@@ -197,6 +219,9 @@ function displayHurricanes(year) {
       console.error('An error occurred:', error);
     });
 }
+
+
+
 
 //whenever HTML window is refreshed, display default select year hurricanes 
 window.onload = function () {
