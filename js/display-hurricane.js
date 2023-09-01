@@ -1,5 +1,5 @@
 var colorStops = ["#000000", "#222", "#ffc300", "#ff8d19", "#ff5733", "#ff2e00"];
-var popup;
+
 
 function filterDate(geojsonUrl, columnName, targetDate) {
   return fetch(geojsonUrl)
@@ -71,10 +71,10 @@ function displayHurricanes(year) {
               'line-width': {
                 'base': 1,
                 'stops': [
-                [3, 3],
-                [10, 12]
+                  [3, 3],
+                  [10, 12]
                 ]
-                },
+              },
               'line-opacity': 0.8
             },
             filter: [
@@ -90,7 +90,7 @@ function displayHurricanes(year) {
 
 
 
-          
+
           map.addLayer({
             id: 'hurricane-layer' + year + hurrName,
             type: 'circle',
@@ -122,17 +122,17 @@ function displayHurricanes(year) {
               'circle-radius': {
                 'base': 1.75,
                 'stops': [
-                [3, 2],
-                [10, 50]
+                  [3, 2],
+                  [10, 50]
                 ]
-                },
-            //   'circle-color': [
-            //     'interpolate',
-            //     ['linear'],
-            //     ['get', 'Intensity_WS'],
-            //     10.0, "blue",
-            //     165.0, "red"
-            //   ]
+              },
+              //   'circle-color': [
+              //     'interpolate',
+              //     ['linear'],
+              //     ['get', 'Intensity_WS'],
+              //     10.0, "blue",
+              //     165.0, "red"
+              //   ]
             },
             filter: [
               'all',
@@ -142,10 +142,10 @@ function displayHurricanes(year) {
           });
         }
 
-
+        var popup;
 
         map.on("mouseenter", "hurricane-layer" + year + hurrName, (e) => {
-          const name = e.features[0].properties.Name; 
+          const name = e.features[0].properties.Name;
           const intensityWS = e.features[0].properties.Intensity_WS;
           const intensityMSLP = e.features[0].properties.Intensity_MSLP;
           const cat = e.features[0].properties.Intensity_Cat;
@@ -153,7 +153,7 @@ function displayHurricanes(year) {
           const month = e.features[0].properties.Month;
           const day = e.features[0].properties.Day;
 
-          popup = new mapboxgl.Popup({closeButton: false}).setLngLat(e.lngLat);
+          popup = new mapboxgl.Popup({ closeButton: false }).setLngLat(e.lngLat);
           //popup.setHTML(popupTemplate(name, intensityMSLP,intensityWS,year,month,day));
           popup.setHTML(`<div>
       <strong>${name} : ${year}/${month}/${day}</strong><ul>
@@ -167,13 +167,13 @@ function displayHurricanes(year) {
           popup.addTo(map);
 
         });
-        map.on("mouseleave", "hurricane-layer"+ year+hurrName, ()=>{
-          if (popup){
+        map.on("mouseleave", "hurricane-layer" + year + hurrName, () => {
+          if (popup) {
             popup.remove();
           }
         });
-      
-      
+
+
 
 
 
