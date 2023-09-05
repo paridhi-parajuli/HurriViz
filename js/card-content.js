@@ -41,8 +41,7 @@ selectedDropDown.addEventListener('change', function () {
     const selectedYear = parseInt(dropdownYear.value);
     renderCardsForYear(selectedYear);
 });
-// Fetch data from the JSON file
-// TODO: replace this   
+ 
 function renderCardsForYear(year) {
     let filteredData = allData.filter(feature => feature.properties.Year === year);
     container.innerHTML = '';
@@ -63,7 +62,13 @@ function renderCardsForYear(year) {
                         <div class="card-body">
                             <form id="dataForm">
                                 <input type="hidden" name="cardIndex" value="${index}">
-                                <button type="submit" class="submit-button btn btn-primary" data-index="${index}">Show Plot</button>
+                                <input type="hidden" name="hurricaneName" value="${cardData.properties.Name}">
+                                <input type="hidden" name="hurricaneYear" value="${cardData.properties.Year}">
+                                <button type="submit" id="showPlot${index}" class="submit-button btn btn-primary" data-index="${index}">Show Plot</button>
+                                <button id="loadingBtn${index}" class="btn btn-primary" type="button" disabled style="display: none;">
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    Loading...
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -86,21 +91,65 @@ function renderCardsForYear(year) {
         const form = event.target.closest('.card').querySelector('form');
         const formData = new FormData(form);
 
-        const cardIndexInput = form.querySelector('input[name="cardIndex"]');
-        const indexValue = cardIndexInput ? cardIndexInput.value : null;
+        // Get the index of current clicked button
+        let index = event.target.getAttribute('data-index');
+        
+        // Hide the "Show Plot" button
+        document.getElementById(`showPlot${index}`).style.display = 'none';        
+        // Show the loading button
+        document.getElementById(`loadingBtn${index}`).style.display = 'block';
 
-        if (indexValue) {
-            const selectedName = filteredData[indexValue].properties.Name;
-            const selectedYear = filteredData[indexValue].properties.Year;
+        if (form.checkValidity()) {
 
-            // Now, use these to set the iframe's source:
-            const iframeSrc = `data/templates/${selectedYear}/${selectedYear}_${selectedName}.html`;
-            document.querySelector("#iframeModal iframe").src = iframeSrc;
+            fetch('http://127.0.0.1:8080/plotly', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.text())
+                .then(data => {
+                    // Hide the loading button
+                    document.getElementById(`loadingBtn${index}`).style.display = 'none';
+                    // Show the submit button
+                    document.getElementById(`showPlot${index}`).style.display = 'block';
 
-            // Finally, show the modal:
-            const modal = new bootstrap.Modal(document.getElementById('iframeModal'));
-            modal.show();
+                    const iframeElement = document.querySelector("#iframeModal iframe");
+                    // Write the fetched HTML directly into the iframe's document
+                    iframeElement.contentWindow.document.open();
+                    iframeElement.contentWindow.document.write(data);
+                    iframeElement.contentWindow.document.close();
+
+                    // Show the modal
+                    const modalInstance = new bootstrap.Modal(document.getElementById('iframeModal'));
+                    modalInstance.show();
+
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById(`loadingBtn${index}`).style.display = 'none';
+                    document.getElementById(`showPlot${index}`).style.display = 'block';
+                });
+        } else {
+            form.classList.add('was-validated');
+            document.getElementById(`loadingBtn${index}`).style.display = 'none';
+            document.getElementById(`showPlot${index}`).style.display = 'block';
         }
+
+        // const cardIndexInput = form.querySelector('input[name="cardIndex"]');
+        // const indexValue = cardIndexInput ? cardIndexInput.value : null;
+
+        // if (indexValue) {
+        //     const selectedName = filteredData[indexValue].properties.Name;
+        //     const selectedYear = filteredData[indexValue].properties.Year;
+
+        //     // Now, use these to set the iframe's source:
+        //     const iframeSrc = `data/templates/${selectedYear}/${selectedYear}_${selectedName}.html`;
+        //     const iframeElement = document.querySelector("#iframeModal iframe");
+        //     iframeElement.src = iframeSrc;
+
+        //     // Finally, show the modal:
+        //     const modal = new bootstrap.Modal(document.getElementById('iframeModal'));
+        //     modal.show();
+        // }
     }
 }
 // Set the height of hurricane cards div

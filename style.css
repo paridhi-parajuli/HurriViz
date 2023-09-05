@@ -109,3 +109,9 @@ body, html{
     transform: rotate(360deg);
   }
 }
+
+
+.modal-body iframe {
+  width: 100% !important;  /* Use !important to override any other styles */
+  height: 100% !important;  /* Use !important to override any other styles */
+}
