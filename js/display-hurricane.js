@@ -45,7 +45,7 @@ function removeOtherHurricanes(hurrName,year, e){
         }});
       map.flyTo({
         center: [e.lngLat.lng, e.lngLat.lat],
-        zoom: 6,
+        zoom: 16,
         speed: 1,
         pitch: 60,
         bearing: 0,
@@ -140,45 +140,6 @@ map.on('style.load', () => {
     type: 'geojson',
     data: 'data/counties-data.geojson'
   });
-
-  // map.addSource('ndvi_pre', {
-  //   type: 'geojson',
-  //   data: 'data/try.geojson'
-  // });
-
-  // map.addLayer({
-  //   id: "ndvi_pre",
-  //   type: 'circle',
-  //   source: 'ndvi_pre',
-  //   paint: {
-  //     'circle-radius': 5, 
-  //     'circle-color': [
-  //         'get',
-  //         'color'
-  //     ]
-  // }
-  //   });
-  
-    // map.addSource('ndvi_post', {
-    //   type: 'geojson',
-    //   data: 'data/try_post.geojson'
-    // });
-  
-    // map.addLayer({
-    //   id: "ndvi_post",
-    //   type: 'circle',
-    //   source: 'ndvi_post',
-    //   paint: {
-    //     'circle-radius': 2, 
-    //     'circle-opacity':0.6,
-    //     'circle-color': [
-    //         'get',
-    //         'color'
-    //     ]
-    // }
-    //   });
-    
-
 
 
 });
