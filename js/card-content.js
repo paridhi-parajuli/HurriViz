@@ -63,6 +63,8 @@ function renderCardsForYear(year) {
                         <div class="card-body">
                             <form id="dataForm">
                                 <input type="hidden" name="cardIndex" value="${index}">
+                                <input type="hidden" name="hurricaneName" value="${cardData.properties.Name}">
+                                <input type="hidden" name="hurricaneYear" value="${cardData.properties.Year}">
                                 <button type="submit" class="submit-button btn btn-primary" data-index="${index}">Show Plot</button>
                             </form>
                         </div>
@@ -86,21 +88,48 @@ function renderCardsForYear(year) {
         const form = event.target.closest('.card').querySelector('form');
         const formData = new FormData(form);
 
-        const cardIndexInput = form.querySelector('input[name="cardIndex"]');
-        const indexValue = cardIndexInput ? cardIndexInput.value : null;
+        if (form.checkValidity()) {
 
-        if (indexValue) {
-            const selectedName = filteredData[indexValue].properties.Name;
-            const selectedYear = filteredData[indexValue].properties.Year;
+            fetch('http://127.0.0.1:5000/plotly', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.text())
+                .then(data => {
+                    const iframeElement = document.querySelector("#iframeModal iframe");
 
-            // Now, use these to set the iframe's source:
-            const iframeSrc = `data/templates/${selectedYear}/${selectedYear}_${selectedName}.html`;
-            document.querySelector("#iframeModal iframe").src = iframeSrc;
+                    // Write the fetched HTML directly into the iframe's document
+                    iframeElement.contentWindow.document.open();
+                    iframeElement.contentWindow.document.write(data);
+                    iframeElement.contentWindow.document.close();
 
-            // Finally, show the modal:
-            const modal = new bootstrap.Modal(document.getElementById('iframeModal'));
-            modal.show();
+                    const modalInstance = new bootstrap.Modal(document.getElementById('iframeModal'));
+                    modalInstance.show();
+
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        } else {
+            form.classList.add('was-validated');
         }
+
+        // const cardIndexInput = form.querySelector('input[name="cardIndex"]');
+        // const indexValue = cardIndexInput ? cardIndexInput.value : null;
+
+        // if (indexValue) {
+        //     const selectedName = filteredData[indexValue].properties.Name;
+        //     const selectedYear = filteredData[indexValue].properties.Year;
+
+        //     // Now, use these to set the iframe's source:
+        //     const iframeSrc = `data/templates/${selectedYear}/${selectedYear}_${selectedName}.html`;
+        //     const iframeElement = document.querySelector("#iframeModal iframe");
+        //     iframeElement.src = iframeSrc;
+
+        //     // Finally, show the modal:
+        //     const modal = new bootstrap.Modal(document.getElementById('iframeModal'));
+        //     modal.show();
+        // }
     }
 }
 // Set the height of hurricane cards div
