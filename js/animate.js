@@ -29,7 +29,7 @@ const animateHurricane = (name, year) => {
                 .setLngLat(lineString.geometry.coordinates[0])
                 .addTo(map);
 
-            marker.getElement().innerHTML = '<img src="images/tornado.png" style="width: 30px; height: 30px;" class="rotating-marker">';
+            marker.getElement().innerHTML = '<img src="images/tornado.png" style="width: 50px; height: 50px;" class="rotating-marker">';
 
             function animateMarker() {
                 let i = 0;
