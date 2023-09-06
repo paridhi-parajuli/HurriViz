@@ -3,7 +3,7 @@ This will handle all the logic
 for card contents on the right sidebar.
 */
 
-import {fetchCSV, getIntensityCategory} from './utlities.js';
+import { fetchCSV, getIntensityCategory } from './utlities.js';
 const container = document.querySelector('#cards-div');
 const selectedDropDown = document.getElementById('dropdown');
 
@@ -71,10 +71,17 @@ function renderCardsForYear(year) {
                     <div class="card-body card-body-header" data-bs-toggle="collapse" data-bs-target="#collapse${index}">
                         <h4>
                             ${cardData.properties.Name}
+        
                             <i class="fas fa-chevron-down float-right"></i>
                         </h4>
-
-                        <div>${getIntensityCategory(cardData.properties.Category)}</div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <button onclick="animateHurricane('${cardData.properties.Name}',${cardData.properties.Year})" class="btn btn-info">Animate </button>
+                            </div>
+                            <div class="col-md-4">
+                                ${getIntensityCategory(cardData.properties.Category)}
+                            </div>
+                        </div>
                         <div style="font-size: 0.8em;">${cardData.properties.Year}-${cardData.properties.Month}-${cardData.properties.Day}</div>
 
                     </div>

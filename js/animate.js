@@ -6,7 +6,7 @@ along its own trajectory.
 // animateHurricane animates a hurricane along its own trajectory
 // given the name and year of that hurricane 
 const animateHurricane = (name, year) => {
-
+    console.log("getting called!")
     fetch("data/hurdat_line.geojson")
         .then(resp => resp.json())
         .then(geojsonData => {
@@ -62,6 +62,6 @@ const animateHurricane = (name, year) => {
 
 }
 
-const hurricaneName = "CRISTOBAL";
-const year = 2020;
-animateHurricane(hurricaneName, year);
+// const hurricaneName = "CRISTOBAL";
+// const year = 2020;
+// animateHurricane(hurricaneName, year);
