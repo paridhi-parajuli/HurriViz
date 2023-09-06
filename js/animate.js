@@ -6,7 +6,7 @@ along its own trajectory.
 // animateHurricane animates a hurricane along its own trajectory
 // given the name and year of that hurricane 
 const animateHurricane = (name, year) => {
-
+    console.log("getting called!")
     fetch("data/hurdat_line.geojson")
         .then(resp => resp.json())
         .then(geojsonData => {
@@ -29,7 +29,7 @@ const animateHurricane = (name, year) => {
                 .setLngLat(lineString.geometry.coordinates[0])
                 .addTo(map);
 
-            marker.getElement().innerHTML = '<img src="images/tornado.png" style="width: 30px; height: 30px;" class="rotating-marker">';
+            marker.getElement().innerHTML = '<img src="images/tornado.png" style="width: 50px; height: 50px;" class="rotating-marker">';
 
             function animateMarker() {
                 let i = 0;
@@ -62,6 +62,6 @@ const animateHurricane = (name, year) => {
 
 }
 
-const hurricaneName = "CRISTOBAL";
-const year = 2020;
-animateHurricane(hurricaneName, year);
+// const hurricaneName = "CRISTOBAL";
+// const year = 2020;
+// animateHurricane(hurricaneName, year);
