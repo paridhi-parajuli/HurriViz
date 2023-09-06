@@ -29,6 +29,7 @@ Promise.all([
                 uniqueNameYearSet.add(key);
                 if (hurricaneMap.has(key)) {
                     feature.properties.Category = hurricaneMap.get(key);
+                    feature.properties.Damage = feature.properties["Damage (USD in Millions)"];
                 } else {
                     feature.properties.Category = 'Unknown'; // or some default value
                 }
@@ -87,13 +88,99 @@ function renderCardsForYear(year) {
                     </div>
                     <div class="collapse" id="collapse${index}">
                         <div class="card-body" style="padding-top:0px;">
-                            <div>Damage: </div>
-                            <div style="padding-bottom:10px;">Deaths: </div>
+                            <div>Damage: ${cardData.properties.Damage}</div>
+                            <div style="padding-bottom:10px;">Deaths: ${cardData.properties.Deaths}</div>
                             <form id="dataForm">
                                 <input type="hidden" name="cardIndex" value="${index}">
                                 <input type="hidden" name="hurricaneName" value="${cardData.properties.Name}">
                                 <input type="hidden" name="hurricaneYear" value="${cardData.properties.Year}">
                                 
+                                <label>Select Visualization Type:</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="displayFormat" id="graphOption${index}" value="time" checked>
+                                    <label class="form-check-label" for="graphOption${index}">
+                                        Time-Series
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="displayFormat" id="imageOption${index}" value="horizontal">
+                                    <label class="form-check-label" for="imageOption${index}">
+                                        Horizontal Slice
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="displayFormat" id="imageOption${index}" value="vertical">
+                                    <label class="form-check-label" for="imageOption${index}">
+                                        Vertical Cross Section
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="pressureDropdown${index}">Select Pressure:</label>
+                                    <select class="form-select scrollable-dropdown" id="pressureDropdown${index}" name="pressureValue">
+                                        <option value="1000">1000 mb</option>
+                                        <option value="950">950 mb</option>
+                                        <option value="900">900 mb</option>
+                                        <option value="850">850 mb</option>
+                                        <option value="800">800 mb</option>
+                                        <option value="750">750 mb</option>
+                                        <option value="700">700 mb</option>
+                                        <option value="650">650 mb</option>
+                                        <option value="600">600 mb</option>
+                                        <option value="550">550 mb</option>
+                                        <option value="500">500 mb</option>
+                                        <option value="450">450 mb</option>
+                                        <option value="400">400 mb</option>
+                                        <option value="350">350 mb</option>
+                                        <option value="300">300 mb</option>
+                                        <option value="250">250 mb</option>
+                                        <option value="200">200 mb</option>
+                                        <option value="150">150 mb</option>
+                                        <option value="100" selected>100 mb</option>
+                                    </select>
+                                    <label for="variableDropdown${index}">Select Variable:</label>
+                                    <select class="form-select scrollable-dropdown" id="variableDropdown${index}" name="variableValue">
+                                        <option value="u10">10m_u_component_of_wind</option>
+                                        <option value="v10">10m_v_component_of_wind</option>
+                                        <option value="t2m">2m_temperature</option>
+                                        <option value="msl">mean_sea_level_pressure</option>
+                                        <option value="tp">total_precipitation</option>
+                                        <option value="d" selected>divergence</option>
+                                        <option value="z">geopotential</option>
+                                        <option value="pv">potential_vorticity</option>
+                                        <option value="r">relative_humidity</option>
+                                        <option value="t">temperature</option>
+                                        <option value="u">u_component_of_wind</option>
+                                        <option value="v">v_component_of_wind</option>
+                                        <option value="w">vertical_velocity</option>
+                                        <option value="vo">vorticity</option>
+                                    </select>
+                                    <label for="timeStampDropdown${index}">Select TimeStamp:</label>
+                                        <select class="form-select scrollable-dropdown" id="timeStampDropdown${index}" name="timeStampValue">
+                                        <option value="2022-09-25 00:00Z">2022-09-25 00:00Z</option>
+                                        <option value="2022-09-25 00:06Z">2022-09-25 00:06Z</option>
+                                        <option value="2022-09-25 00:12Z">2022-09-25 00:12Z</option>
+                                        <option value="2022-09-25 00:18Z">2022-09-25 00:18Z</option>
+                                        <option value="2022-09-26 00:00Z">2022-09-26 00:00Z</option>
+                                        <option value="2022-09-26 00:06Z">2022-09-26 00:06Z</option>
+                                        <option value="2022-09-26 00:12Z">2022-09-26 00:12Z</option>
+                                        <option value="2022-09-26 00:18Z">2022-09-26 00:18Z</option>
+                                        <option value="2022-09-27 00:00Z">2022-09-27 00:00Z</option>
+                                        <option value="2022-09-27 00:06Z">2022-09-27 00:06Z</option>
+                                        <option value="2022-09-27 00:12Z">2022-09-27 00:02Z</option>
+                                        <option value="2022-09-27 00:18Z">2022-09-27 00:18Z</option>
+                                        <option value="2022-09-28 00:00Z">2022-09-28 00:00Z</option>
+                                        <option value="2022-09-28 00:06Z">2022-09-28 00:06Z</option>
+                                        <option value="2022-09-28 00:12Z">2022-09-28 00:12Z</option>
+                                        <option value="2022-09-28 00:18Z">2022-09-28 00:18Z</option>
+                                        <option value="2022-09-29 00:00Z">2022-09-29 00:00Z</option>
+                                        <option value="2022-09-29 00:06Z">2022-09-29 00:06Z</option>
+                                        <option value="2022-09-29 00:12Z">2022-09-29 00:12Z</option>
+                                        <option value="2022-09-29 00:18Z">2022-09-29 00:18Z</option>
+                                        <option value="2022-09-30 00:00Z">2022-09-30 00:00Z</option>
+                                        </select>
+                                </div>
+
                                 <button type="submit" id="showPlot${index}" class="submit-button btn btn-primary" data-index="${index}">Show Plot</button>
                                 <button id="loadingBtn${index}" class="btn btn-primary" type="button" disabled style="display: none;">
                                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -128,6 +215,33 @@ function renderCardsForYear(year) {
         document.getElementById(`showPlot${index}`).style.display = 'none';
         // Show the loading button
         document.getElementById(`loadingBtn${index}`).style.display = 'block';
+
+        const pressureValue = document.getElementById(`pressureDropdown${index}`).value;
+        const variableValue = document.getElementById(`variableDropdown${index}`).value;
+        const timeStampValue = document.getElementById(`timeStampDropdown${index}`).value;
+        const displayFormat = formData.get('displayFormat');
+
+        const formattedTimeStamp = timeStampValue.replace(/:\d{2}Z/, '').replace(/ /, 'T');
+
+        // Construct the file name
+        console.log(displayFormat);
+        let jpegFileName = "";
+        if (displayFormat == "time") {
+            jpegFileName = `Time-Series/TS_IAN_${variableValue}_${pressureValue}.html`;
+        } else if (displayFormat == "horizontal"){
+            jpegFileName = `Horizontal/IAN_${variableValue}_${pressureValue}_${formattedTimeStamp}_wind0.jpeg`;
+        } else {
+            jpegFileName = "";
+        }
+
+        console.log('Generated JPEG file name:', jpegFileName);
+
+        document.getElementById('modalImage').src = 'data/templates/IAN/' + jpegFileName;
+        const modal = new bootstrap.Modal(document.getElementById('iframeModal'));
+        modal.show();
+        document.getElementById(`loadingBtn${index}`).style.display = 'none';
+        document.getElementById(`showPlot${index}`).style.display = 'block';
+
 
         // if (form.checkValidity()) {
 
