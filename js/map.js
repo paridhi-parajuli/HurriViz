@@ -3,8 +3,8 @@ mapboxgl.accessToken = 'pk.eyJ1IjoicGFyaWRoaTEyIiwiYSI6ImNsaWMxcnRwejBnYXkzZG1ub
 const map = new mapboxgl.Map({
     container: 'map',
     style: "mapbox://styles/mapbox/satellite-streets-v12",
-    center: [-80.786052, 36.830348],
-    pitch: 55,
-    zoom: 3
+    center: [-95, 60],  //do not change this
+    pitch: 59,
+    zoom: 2
 });
 

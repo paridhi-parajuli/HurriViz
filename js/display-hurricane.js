@@ -118,16 +118,31 @@ function removeOtherHurricanes(hurrName, year, e) {
 
   });
 
+}
 
+function rotateCamera(timestamp) {
+  let bearing = (timestamp / 25) % 360;
+  map.rotateTo(bearing);
+  if (bearing > 359) {
+    //this will fly map to right position after rotation
+    map.flyTo(
+      {
+        center: [-80.786052, 36.830348],
+        pitch: 45,
+        zoom: 3.5
+      }
+    );
+    map.setFog({});
 
-
-
-
-
-
+    return;
+  }
+  requestAnimationFrame(rotateCamera);
 }
 
 map.on('style.load', () => {
+  //rotate camera on load 
+  rotateCamera(0);
+
 
   map.addSource('hurdat', {
     type: 'geojson',
