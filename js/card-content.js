@@ -97,21 +97,27 @@ function renderCardsForYear(year) {
                                 
                                 <label>Select Visualization Type:</label>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="displayFormat" id="graphOption${index}" value="time" checked>
-                                    <label class="form-check-label" for="graphOption${index}">
-                                        Time-Series
+                                    <input class="form-check-input" type="radio" name="displayFormat" id="intensityOption${index}" data-index="${index}" value="intensity" checked>
+                                    <label class="form-check-label" for="intensityOption${index}">
+                                        Hurricane Intensity
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="displayFormat" id="imageOption${index}" value="horizontal">
-                                    <label class="form-check-label" for="imageOption${index}">
+                                    <input class="form-check-input" type="radio" name="displayFormat" id="horizontalOption${index}" data-index="${index}" value="horizontal">
+                                    <label class="form-check-label" for="horizontalOption${index}">
                                         Horizontal Slice
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="displayFormat" id="imageOption${index}" value="vertical">
-                                    <label class="form-check-label" for="imageOption${index}">
+                                    <input class="form-check-input" type="radio" name="displayFormat" id="verticalOption${index}" data-index="${index}" value="vertical">
+                                    <label class="form-check-label" for="verticalOption${index}">
                                         Vertical Cross Section
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="displayFormat" id="timeOption${index}" data-index="${index}" value="time">
+                                    <label class="form-check-label" for="timeOption${index}">
+                                        Time-Series
                                     </label>
                                 </div>
 
@@ -199,8 +205,48 @@ function renderCardsForYear(year) {
         // as adding the form through innerHTML won't allow for event handlers
         const newButton = cardDiv.querySelector('.submit-button');
         newButton.addEventListener('click', handleSubmit);
+
+        const radioButtons = cardDiv.querySelectorAll('.form-check-input');
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', handlePlotType);
+        });
     });
 
+    function handlePlotType(event){
+        let index = event.target.getAttribute('data-index');
+        const pressureDropdown = document.getElementById(`pressureDropdown${index}`);
+        const variableDropdown = document.getElementById(`variableDropdown${index}`);
+        const timeStampDropdown = document.getElementById(`timeStampDropdown${index}`);
+        
+            // Default: hide all dropdowns
+        pressureDropdown.style.display = 'none';
+        variableDropdown.style.display = 'none';
+        timeStampDropdown.style.display = 'none';
+        const selectedFormat = document.querySelector(`input[name="displayFormat"]:checked`).value;
+    
+        switch(selectedFormat) {
+            case "intensity":
+                // 'Intensity' only uses 'timeStampDropdown'
+                timeStampDropdown.style.display = 'block';
+                break;
+            case "horizontal":
+                // 'Intensity' only uses 'timeStampDropdown'
+                pressureDropdown.style.display = 'block';
+                variableDropdown.style.display = 'block';
+                timeStampDropdown.style.display = 'block';
+                break;
+            case "vertical":
+                // 'Intensity' only uses 'timeStampDropdown'
+                variableDropdown.style.display = 'block';
+                timeStampDropdown.style.display = 'block';
+                break;
+            case "time":
+                // Display dropdowns for 'time'
+                pressureDropdown.style.display = 'block';
+                timeStampDropdown.style.display = 'block';
+                break;
+        }
+    }
 
     function handleSubmit(event) {
         event.preventDefault();
@@ -216,6 +262,7 @@ function renderCardsForYear(year) {
         // Show the loading button
         document.getElementById(`loadingBtn${index}`).style.display = 'block';
 
+        
         const pressureValue = document.getElementById(`pressureDropdown${index}`).value;
         const variableValue = document.getElementById(`variableDropdown${index}`).value;
         const timeStampValue = document.getElementById(`timeStampDropdown${index}`).value;
@@ -224,24 +271,27 @@ function renderCardsForYear(year) {
         const formattedTimeStamp = timeStampValue.replace(/:\d{2}Z/, '').replace(/ /, 'T');
 
         // Construct the file name
-        console.log(displayFormat);
         let jpegFileName = "";
+        let modal = "";
         if (displayFormat == "time") {
-            jpegFileName = `Time-Series/TS_IAN_${variableValue}_${pressureValue}.html`;
+            jpegFileName = `data/templates/IAN/Time-Series/TS_IAN_${variableValue}_${pressureValue}.html`;
+            const iframeElement = document.querySelector("#iframeModal iframe");
+            iframeElement.src = jpegFileName;
+            modal = new bootstrap.Modal(document.getElementById('iframeModal'));
+            modal.show();
+
         } else if (displayFormat == "horizontal"){
             jpegFileName = `Horizontal/IAN_${variableValue}_${pressureValue}_${formattedTimeStamp}_wind0.jpeg`;
+            document.getElementById('modalImage').src = 'data/templates/IAN/' + jpegFileName;
+            modal = new bootstrap.Modal(document.getElementById('jpegModal'));
+            modal.show();
         } else {
             jpegFileName = "";
         }
-
-        console.log('Generated JPEG file name:', jpegFileName);
-
-        document.getElementById('modalImage').src = 'data/templates/IAN/' + jpegFileName;
-        const modal = new bootstrap.Modal(document.getElementById('iframeModal'));
-        modal.show();
         document.getElementById(`loadingBtn${index}`).style.display = 'none';
         document.getElementById(`showPlot${index}`).style.display = 'block';
 
+        console.log('Generated JPEG file name:', jpegFileName);
 
         // if (form.checkValidity()) {
 
@@ -278,24 +328,24 @@ function renderCardsForYear(year) {
         //     document.getElementById(`showPlot${index}`).style.display = 'block';
         // }
 
-        const cardIndexInput = form.querySelector('input[name="cardIndex"]');
-        const indexValue = cardIndexInput ? cardIndexInput.value : null;
+        // const cardIndexInput = form.querySelector('input[name="cardIndex"]');
+        // const indexValue = cardIndexInput ? cardIndexInput.value : null;
 
-        if (indexValue) {
-            const selectedName = filteredData[indexValue].properties.Name;
-            const selectedYear = filteredData[indexValue].properties.Year;
+        // if (indexValue) {
+        //     const selectedName = filteredData[indexValue].properties.Name;
+        //     const selectedYear = filteredData[indexValue].properties.Year;
 
-            // Now, use these to set the iframe's source:
-            const iframeSrc = `data/templates/${selectedYear}/${selectedYear}_${selectedName}.html`;
-            const iframeElement = document.querySelector("#iframeModal iframe");
-            iframeElement.src = iframeSrc;
+        //     // Now, use these to set the iframe's source:
+        //     const iframeSrc = `data/templates/${selectedYear}/${selectedYear}_${selectedName}.html`;
+        //     const iframeElement = document.querySelector("#iframeModal iframe");
+        //     iframeElement.src = iframeSrc;
 
-            // Finally, show the modal:
-            const modal = new bootstrap.Modal(document.getElementById('iframeModal'));
-            modal.show();
-            document.getElementById(`loadingBtn${index}`).style.display = 'none';
-            document.getElementById(`showPlot${index}`).style.display = 'block';
-        }
+        //     // Finally, show the modal:
+        //     const modal = new bootstrap.Modal(document.getElementById('iframeModal'));
+        //     modal.show();
+        //     document.getElementById(`loadingBtn${index}`).style.display = 'none';
+        //     document.getElementById(`showPlot${index}`).style.display = 'block';
+        // }
     }
 }
 // Set the height of hurricane cards div
@@ -305,3 +355,6 @@ document.querySelector(".col-3").style.height = height + 'px';
 
 
 renderCardsForYear(parseInt(dropdownYear.value));
+
+
+
