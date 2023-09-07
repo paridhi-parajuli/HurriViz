@@ -128,7 +128,7 @@ function renderCardsForYear(year) {
                                 </div>
                                 <div class="form-group" style="padding:5px;">
                                 <div id="pressureDropdownDiv${index}">
-                                    <label class='bold-label' for="pressureDropdown${index}">Select Pressure Levels:</label>
+                                    <label class='bold-label' for="pressureDropdown${index}">Select Pressure Levels</label>
                                     <select class="form-select scrollable-dropdown" id="pressureDropdown${index}" name="pressureValue">
                                         <option value="1000">1000 mb</option>
                                         <option value="950">950 mb</option>
@@ -152,7 +152,7 @@ function renderCardsForYear(year) {
                                     </select>
                                 </div>
                                 <div id="variableDropdownDiv${index}">
-                                    <label class='bold-label' for="variableDropdown${index}">Select Variable:</label>
+                                    <label class='bold-label' for="variableDropdown${index}">Select Variable</label>
                                     <select class="form-select scrollable-dropdown" id="variableDropdown${index}" name="variableValue">
                                         <option value="u10">10m_u_component_of_wind</option>
                                         <option value="v10">10m_v_component_of_wind</option>
@@ -171,7 +171,7 @@ function renderCardsForYear(year) {
                                     </select>
                                 </div>
                                 <div id="timeStampDropdownDiv${index}">
-                                    <label class='bold-label' for="timeStampDropdown${index}">Select TimeStamp:</label>
+                                    <label class='bold-label' for="timeStampDropdown${index}">Select TimeStamp</label>
                                         <select class="form-select scrollable-dropdown" id="timeStampDropdown${index}" name="timeStampValue">
                                         <option value="2022-09-25 00:00Z">2022-09-25 00:00Z</option>
                                         <option value="2022-09-25 00:06Z">2022-09-25 00:06Z</option>
