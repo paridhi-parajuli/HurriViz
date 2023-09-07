@@ -15,7 +15,7 @@ Promise.all([
     fetchCSV('data/hurdat_hurricane_category_start-end_date.csv')
 ])
     .then(([jsonData, hurricaneMap]) => {
-        console.log(hurricaneMap)
+
         // filter out the goejson to have a single name-year record
         let uniqueNameYearSet = new Set();
         let uniqueEntries = [];
@@ -73,60 +73,62 @@ function renderCardsForYear(year) {
 
         const cardContent = `
                 <div class="card mb-3">
-                    <div class="card-body card-body-header" data-bs-toggle="collapse" data-bs-target="#collapse${index}">
-                        <h4>
-                            ${cardData.properties.Name}
-        
-                            <i class="fas fa-chevron-down float-right"></i>
-                        </h4>
+                    <div class="card-body card-body-header">
+                        <div  data-bs-toggle="collapse" data-bs-target="#collapse${index}">
+                            <h4>
+                                ${cardData.properties.Name}
+                                <i class="fas fa-chevron-down float-right"></i>
+                            </h4>
+                        </div>
                         <div class="row">
-                            <div class="col-md-8">
-                                <button onclick="animateHurricane('${cardData.properties.Name}',${cardData.properties.Year})" class="btn btn-info">Animate </button>
-                            </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6 ">
                                 ${getIntensityCategory(cardData.properties.Category)}
                             </div>
+                            <div class="col-md-6 text-end">
+                            <button onclick="animateHurricane('${cardData.properties.Name}',${cardData.properties.Year})" class="btn btn-info">Animate </button>
+                            </div>
                         </div>
-                        <div style="font-size: 0.8em;">${cardData.properties.StartDate}-${cardData.properties.EndDate}</div>
-
+                        <div style="font-size: 0.8em; padding:5px;">${cardData.properties.StartDate}-${cardData.properties.EndDate}</div>
                     </div>
+
                     <div class="collapse" id="collapse${index}">
                         <div class="card-body" style="padding-top:0px;">
-                            <div>Damage: ${cardData.properties.Damage}</div>
-                            <div style="padding-bottom:10px;">Deaths: ${cardData.properties.Deaths}</div>
+                            <div><strong class="font-weight-bold">Damage (USD in Millions):  ${cardData.properties.Damage}</strong></div>
+                            <div style="padding-bottom:10px;"><strong class="font-weight-bold">Deaths: ${cardData.properties.Deaths}</strong></div>
                             <form id="dataForm">
                                 <input type="hidden" name="cardIndex" value="${index}">
                                 <input type="hidden" name="hurricaneName" value="${cardData.properties.Name}">
                                 <input type="hidden" name="hurricaneYear" value="${cardData.properties.Year}">
-                                
-                                <label>Select Visualization Type:</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="displayFormat" id="intensityOption${index}" data-index="${index}" value="intensity" checked>
-                                    <label class="form-check-label" for="intensityOption${index}">
-                                        Hurricane Intensity
-                                    </label>
+                                <div style="padding:5px;">
+                                <label class='bold-label'>Select Visualization Type:</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="displayFormat${index}" id="intensityOption${index}" data-index="${index}" value="intensity" checked>
+                                        <label class="form-check-label" for="intensityOption${index}">
+                                            Hurricane Intensity
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="displayFormat${index}" id="horizontalOption${index}" data-index="${index}" value="horizontal">
+                                        <label class="form-check-label" for="horizontalOption${index}">
+                                            Horizontal Slice
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="displayFormat${index}" id="verticalOption${index}" data-index="${index}" value="vertical">
+                                        <label class="form-check-label" for="verticalOption${index}">
+                                            Vertical Cross Section
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="displayFormat${index}" id="timeOption${index}" data-index="${index}" value="time">
+                                        <label class="form-check-label" for="timeOption${index}">
+                                            Time-Series
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="displayFormat" id="horizontalOption${index}" data-index="${index}" value="horizontal">
-                                    <label class="form-check-label" for="horizontalOption${index}">
-                                        Horizontal Slice
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="displayFormat" id="verticalOption${index}" data-index="${index}" value="vertical">
-                                    <label class="form-check-label" for="verticalOption${index}">
-                                        Vertical Cross Section
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="displayFormat" id="timeOption${index}" data-index="${index}" value="time">
-                                    <label class="form-check-label" for="timeOption${index}">
-                                        Time-Series
-                                    </label>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="pressureDropdown${index}">Select Pressure:</label>
+                                <div class="form-group" style="padding:5px;">
+                                <div id="pressureDropdownDiv${index}">
+                                    <label class='bold-label' for="pressureDropdown${index}">Select Pressure Levels:</label>
                                     <select class="form-select scrollable-dropdown" id="pressureDropdown${index}" name="pressureValue">
                                         <option value="1000">1000 mb</option>
                                         <option value="950">950 mb</option>
@@ -148,7 +150,9 @@ function renderCardsForYear(year) {
                                         <option value="150">150 mb</option>
                                         <option value="100" selected>100 mb</option>
                                     </select>
-                                    <label for="variableDropdown${index}">Select Variable:</label>
+                                </div>
+                                <div id="variableDropdownDiv${index}">
+                                    <label class='bold-label' for="variableDropdown${index}">Select Variable:</label>
                                     <select class="form-select scrollable-dropdown" id="variableDropdown${index}" name="variableValue">
                                         <option value="u10">10m_u_component_of_wind</option>
                                         <option value="v10">10m_v_component_of_wind</option>
@@ -165,7 +169,9 @@ function renderCardsForYear(year) {
                                         <option value="w">vertical_velocity</option>
                                         <option value="vo">vorticity</option>
                                     </select>
-                                    <label for="timeStampDropdown${index}">Select TimeStamp:</label>
+                                </div>
+                                <div id="timeStampDropdownDiv${index}">
+                                    <label class='bold-label' for="timeStampDropdown${index}">Select TimeStamp:</label>
                                         <select class="form-select scrollable-dropdown" id="timeStampDropdown${index}" name="timeStampValue">
                                         <option value="2022-09-25 00:00Z">2022-09-25 00:00Z</option>
                                         <option value="2022-09-25 00:06Z">2022-09-25 00:06Z</option>
@@ -189,13 +195,15 @@ function renderCardsForYear(year) {
                                         <option value="2022-09-29 00:18Z">2022-09-29 00:18Z</option>
                                         <option value="2022-09-30 00:00Z">2022-09-30 00:00Z</option>
                                         </select>
+                                    </div>
                                 </div>
-
-                                <button type="submit" id="showPlot${index}" class="submit-button btn btn-primary" data-index="${index}">Show Plot</button>
-                                <button id="loadingBtn${index}" class="btn btn-primary" type="button" disabled style="display: none;">
-                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                    Loading...
-                                </button>
+                                <div class="text-end">
+                                    <button type="submit" id="showPlot${index}" class="submit-button btn btn-info" data-index="${index}">Show Plot</button>
+                                    <button id="loadingBtn${index}" class="btn btn-info" type="button" disabled style="display: none;">
+                                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                        Loading...
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -213,20 +221,21 @@ function renderCardsForYear(year) {
         const radioButtons = cardDiv.querySelectorAll('.form-check-input');
         radioButtons.forEach(radio => {
             radio.addEventListener('change', handlePlotType);
+            handlePlotType({ target: radio });
         });
     });
 
     function handlePlotType(event){
         let index = event.target.getAttribute('data-index');
-        const pressureDropdown = document.getElementById(`pressureDropdown${index}`);
-        const variableDropdown = document.getElementById(`variableDropdown${index}`);
-        const timeStampDropdown = document.getElementById(`timeStampDropdown${index}`);
+        const pressureDropdown = document.getElementById(`pressureDropdownDiv${index}`);
+        const variableDropdown = document.getElementById(`variableDropdownDiv${index}`);
+        const timeStampDropdown = document.getElementById(`timeStampDropdownDiv${index}`);
         
-            // Default: hide all dropdowns
+        // Default: hide all dropdowns
         pressureDropdown.style.display = 'none';
         variableDropdown.style.display = 'none';
         timeStampDropdown.style.display = 'none';
-        const selectedFormat = document.querySelector(`input[name="displayFormat"]:checked`).value;
+        const selectedFormat = document.querySelector(`input[name="displayFormat${index}"]:checked`).value;
     
         switch(selectedFormat) {
             case "intensity":
@@ -359,6 +368,5 @@ document.querySelector(".col-3").style.height = height + 'px';
 
 
 renderCardsForYear(parseInt(dropdownYear.value));
-
 
 
