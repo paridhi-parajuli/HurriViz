@@ -130,25 +130,25 @@ function renderCardsForYear(year) {
                                 <div id="pressureDropdownDiv${index}">
                                     <label class='bold-label' for="pressureDropdown${index}">Select Pressure Levels</label>
                                     <select class="form-select scrollable-dropdown" id="pressureDropdown${index}" name="pressureValue">
-                                        <option value="1000">1000 mb</option>
-                                        <option value="950">950 mb</option>
-                                        <option value="900">900 mb</option>
-                                        <option value="850">850 mb</option>
-                                        <option value="800">800 mb</option>
-                                        <option value="750">750 mb</option>
-                                        <option value="700">700 mb</option>
-                                        <option value="650">650 mb</option>
-                                        <option value="600">600 mb</option>
-                                        <option value="550">550 mb</option>
-                                        <option value="500">500 mb</option>
-                                        <option value="450">450 mb</option>
-                                        <option value="400">400 mb</option>
-                                        <option value="350">350 mb</option>
-                                        <option value="300">300 mb</option>
-                                        <option value="250">250 mb</option>
-                                        <option value="200">200 mb</option>
-                                        <option value="150">150 mb</option>
-                                        <option value="100" selected>100 mb</option>
+                                        <option value="1000">1000 hPa</option>
+                                        <option value="950">950 hPa</option>
+                                        <option value="900">900 hPa</option>
+                                        <option value="850">850 hPa</option>
+                                        <option value="800">800 hPa</option>
+                                        <option value="750">750 hPa</option>
+                                        <option value="700">700 hPa</option>
+                                        <option value="650">650 hPa</option>
+                                        <option value="600">600 hPa</option>
+                                        <option value="550">550 hPa</option>
+                                        <option value="500">500 hPa</option>
+                                        <option value="450">450 hPa</option>
+                                        <option value="400">400 hPa</option>
+                                        <option value="350">350 hPa</option>
+                                        <option value="300">300 hPa</option>
+                                        <option value="250">250 hPa</option>
+                                        <option value="200">200 hPa</option>
+                                        <option value="150">150 hPa</option>
+                                        <option value="100" selected>100 hPa</option>
                                     </select>
                                 </div>
                                 <div id="variableDropdownDiv${index}">
@@ -252,7 +252,7 @@ function renderCardsForYear(year) {
             case "time":
                 // 'time' uses 'timeStampDropdown' and 'pressureDropdown'
                 pressureDropdown.style.display = 'block';
-                timeStampDropdown.style.display = 'block';
+                variableDropdown.style.display = 'block';
                 break;
             case "intensity":
                 // 'Intensity' only uses 'timeStampDropdown'
@@ -289,7 +289,7 @@ function renderCardsForYear(year) {
         switch(displayFormat) {
 
             case "horizontal":
-                jpegFileName = `data/templates/IAN/Horizontal/IAN_${variableValue}_${pressureValue}_${formattedTimeStamp}_wind0.jpeg`;
+                jpegFileName = `data/templates/IAN/Horizontal/IAN_${variableValue}_${pressureValue}_${formattedTimeStamp}_wind1.jpeg`;
                 document.getElementById('modalImage').src = jpegFileName;
                 modal = new bootstrap.Modal(document.getElementById('jpegModal'));
                 modal.show();
