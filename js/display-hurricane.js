@@ -22,25 +22,22 @@ function filterDate(geojsonUrl, columnName, targetDate) {
     });
 }
 
-function addSlider(hurrName, year, event) {
-  // const baseMap = document.getElementById("map");
-  // const beforeDiv = document.createElement("div");
-  // const aftereDiv = document.createElement("div");
-  // baseMap.appendChild(beforeDiv);
-  // parentDiv.appendChild(aftereDiv);
 
-}
 
 function removeOtherHurricanes(hurrName, year, e) {
   const allLayers = map.getStyle().layers;
   selectedLine = "hurricane-lines" + year + hurrName;
   selectedPoints = "hurricane-layer" + year + hurrName;
+  selectedDots = "hurricane-point" + year + hurrName;
   allLayers.forEach(layer => {
     const layerIdSubstring = layer.id.substring(0, 15);
     if ((layerIdSubstring === "hurricane-lines") && (layer.id != selectedLine)) {
       map.removeLayer(layer.id);
     }
     if ((layerIdSubstring === "hurricane-layer") && (layer.id != selectedPoints)) {
+      map.removeLayer(layer.id);
+    }
+    if ((layerIdSubstring === "hurricane-point") && (layer.id != selectedDots)) {
       map.removeLayer(layer.id);
     }
   });
@@ -56,38 +53,63 @@ function removeOtherHurricanes(hurrName, year, e) {
   //const mapp = document.getElementById("map");
   popup = new mapboxgl.Popup({ className: 'custom-popup' }).setLngLat(e.lngLat);
   popup.setHTML(`
-        <div>
-        <strong>${hurrName}:  </strong><button id ="ndvi-button-pre"> See Pre NDVI </button>
-        <button id ="ndvi-button-post"> See Post NDVI </button>
-        </div>`)
+  <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+  <div>
+      <strong>${hurrName}</strong>
+      <span  id ="clear" style="font-size: 20px; margin-left: 5px; cursor: pointer;" >×</span>
+  </div>
+  <div>
+      <button id="ndvi-button-pre" style="background-color: #4CAF50; color: white; padding: 5px 10px; border: none; cursor: pointer; margin-right: 5px;">Pre NDVI</button>
+      <button id="ndvi-button-post" style="background-color: #007BFF; color: white; padding: 5px 10px; border: none; cursor: pointer;">Post NDVI</button>
+  </div>
+</div>
+`)
   popup.addTo(map);
 
   const ndviPre = document.getElementById("ndvi-button-pre");
   const ndviPost = document.getElementById("ndvi-button-post");
+  const clear = document.getElementById("clear");
+
+  clear.addEventListener("click" ,(e)=>{
+    if (map.getLayer("ndvi_pre")) {
+      map.removeLayer("ndvi_pre");
+    }
+
+    if (map.getLayer("ndvi_post")) {
+      map.removeLayer("ndvi_post");
+    }
+
+  });
+  
   ndviPre.addEventListener("click", (event) => {
     if (map.getLayer("ndvi-post")) {
       removeLayer("ndvi-post")
     }
+    if (!map.getSource("ndvi_pre")){
     map.addSource('ndvi_pre', {
       type: 'geojson',
       data: 'data/try.geojson'
     });
+  }
 
     map.addLayer({
       id: "ndvi_pre",
       type: 'circle',
       source: 'ndvi_pre',
       paint: {
-        'circle-radius': 5,
-        'circle-opacity': 0.4,
+        'circle-radius': 3,
+        'circle-opacity': 0.8,
         'circle-color': [
           'get',
           'color'
         ]
       }
     });
-    map.moveLayer("ndvi-pre", selectedLine);
-    map.moveLayer("ndvi-pre", selectedPoints);
+    if (map.getLayer("ndvi_pre")){
+    
+    map.moveLayer("ndvi_pre", selectedPoints);
+    map.moveLayer("ndvi_pre", selectedLine);
+    }
 
   });
 
@@ -95,26 +117,31 @@ function removeOtherHurricanes(hurrName, year, e) {
     if (map.getLayer("ndvi-pre")) {
       removeLayer("ndvi-pre")
     }
+    if (!map.getSource("ndvi_post")){
     map.addSource('ndvi_post', {
       type: 'geojson',
       data: 'data/try_post.geojson'
     });
+    }
 
     map.addLayer({
       id: "ndvi_post",
       type: 'circle',
       source: 'ndvi_post',
       paint: {
-        'circle-radius': 5,
-        'circle-opacity': 0.4,
+        'circle-radius': 3,
+        'circle-opacity': 0.8,
         'circle-color': [
           'get',
           'color'
         ]
       }
     });
-    map.moveLayer("ndvi-post", selectedLine);
-    map.moveLayer("ndvi-post", selectedPoints);
+    if (map.getLayer("ndvi_post")){
+    
+    map.moveLayer("ndvi_post", selectedPoints);
+    map.moveLayer("ndvi_post", selectedLine);
+    }
 
   });
 
@@ -167,46 +194,6 @@ map.on('style.load', () => {
   //   'source': 'anisbhsl.7e9jnljs',
   // })
 
-  // map.addSource('ndvi_pre', {
-  //   type: 'geojson',
-  //   data: 'data/try.geojson'
-  // });
-
-  // map.addLayer({
-  //   id: "ndvi_pre",
-  //   type: 'circle',
-  //   source: 'ndvi_pre',
-  //   paint: {
-  //     'circle-radius': 5, 
-  //     'circle-color': [
-  //         'get',
-  //         'color'
-  //     ]
-  // }
-  //   });
-
-  // map.addSource('ndvi_post', {
-  //   type: 'geojson',
-  //   data: 'data/try_post.geojson'
-  // });
-
-  // map.addLayer({
-  //   id: "ndvi_post",
-  //   type: 'circle',
-  //   source: 'ndvi_post',
-  //   paint: {
-  //     'circle-radius': 2, 
-  //     'circle-opacity':0.6,
-  //     'circle-color': [
-  //         'get',
-  //         'color'
-  //     ]
-  // }
-  //   });
-
-
-
-
 });
 
 map.loadImage('images/tornado.png', (error, image) => {
@@ -224,7 +211,7 @@ function displayHurricanes(year) {
   // Remove previous layers
   allLayers.forEach(layer => {
     const layerIdSubstring = layer.id.substring(0, 15);
-    if ((layerIdSubstring === "hurricane-layer") || (layerIdSubstring === "hurricane-lines")) {
+    if ((layerIdSubstring === "hurricane-layer") || (layerIdSubstring === "hurricane-lines") || (layerIdSubstring === "hurricane-point")) {
       map.removeLayer(layer.id);
     }
   });
@@ -258,10 +245,6 @@ function displayHurricanes(year) {
 
 
         if (!map.getLayer('hurricane-layer' + year + hurrName)) {
-
-
-
-
           map.addLayer({
             id: 'hurricane-layer' + year + hurrName,
             type: 'symbol',
@@ -283,34 +266,39 @@ function displayHurricanes(year) {
                 ]
               },
             },
+            filter: [
+              'all',
+              ['==', 'Year', year],
+              ['==', 'Name', hurrName]
+            ]
+          });
+        }
+        if (!map.getLayer('hurricane-point' + year + hurrName)) {
+          map.addLayer({
+            id: 'hurricane-point' + year + hurrName,
+            type: 'circle',
+            source: 'hurdat',
             paint: {
-              // 'circle-color': [
-              //   'match',
-              //   ['get', 'Intensity_Cat'],
-              //   'TD', 'lightblue',   // Light color for 'TD'
-              //   'TS', 'blue',        // Blue color for 'TS' (you can adjust the color)
-              //   'Cat1', 'red',       // Red color for 'Cat1'
-              //   'Cat2', 'darkred',   // Dark red color for 'Cat2'
-              //   'Cat3', 'darkred',   // Dark red color for 'Cat3'
-              //   'Cat4', 'darkred',   // Dark red color for 'Cat4'
-              //   'Cat5', 'darkred',   // Dark red color for 'Cat5'
-              //   'gray'               // Default color for other values
-              // ],
+              'circle-color': [
+                'match',
+                ['get', 'Intensity_Cat'],
+                'TD', '#00FFFF',   
+                'TS', '#4169E1',       
+                'Cat1', '#32CD32',       
+                'Cat2', '#FFFF00',   
+                'Cat3', '#FFD700',   
+                'Cat4', '#FF4040',   
+                'Cat5', '#8B1A1A',   
+                'gray'               
+              ],
 
-              // 'circle-radius': {
-              //   'base': 1.75,
-              //   'stops': [
-              //     [3, 2],
-              //     [10, 50]
-              //   ]
-              // },
-              //   'circle-color': [
-              //     'interpolate',
-              //     ['linear'],
-              //     ['get', 'Intensity_WS'],
-              //     10.0, "blue",
-              //     165.0, "red"
-              //   ]
+              'circle-radius': {
+                'base': 5,
+                'stops': [
+                  [3, 5],
+                  [10, 80]
+                ]
+              }
             },
             filter: [
               'all',
@@ -336,14 +324,15 @@ function displayHurricanes(year) {
           popup.setHTML(`
           
             
-          <div>
-      <strong>${name} : ${year}/${month}/${day}</strong><ul>
-      <li>Category :  ${cat}</li>
-      <li>Total Damage :  $2M</li>
-      <li>Deaths : 40</li>
-      <li>ABC: 456</li>
-      </ul>
-      </div>`)
+          <div style="background-color: #f5f5f5; padding: 10px; border-radius: 5px; box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);">
+          <strong style="font-size: 18px; color: #333;">${name} : ${year}/${month}/${day}</strong>
+          <ul style="list-style-type: none; padding-left: 0;">
+              <li style="margin: 5px 0;">Category: ${cat}</li>
+              <li style="margin: 5px 0;">Total Damage ($M): ${e.features[0].properties["Damage (USD in Millions)"]}</li>
+              <li style="margin: 5px 0;">Deaths: ${e.features[0].properties["Deaths"]}</li>
+          </ul>
+      </div>
+      `)
           console.log("here", popup);
           popup.addTo(map);
 
@@ -393,4 +382,3 @@ window.onload = function () {
 dropdownYear.addEventListener('change', () => {
   displayHurricanes(parseInt(dropdownYear.value));
 });
-
