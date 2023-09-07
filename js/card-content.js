@@ -271,15 +271,15 @@ function renderCardsForYear(year) {
         let index = event.target.getAttribute('data-index');
 
         // Hide the "Show Plot" button
-        document.getElementById(`showPlot${index}`).style.display = 'none';
+        // document.getElementById(`showPlot${index}`).style.display = 'none';
         // Show the loading button
-        document.getElementById(`loadingBtn${index}`).style.display = 'block';
+        // document.getElementById(`loadingBtn${index}`).style.display = 'block';
 
         
         const pressureValue = document.getElementById(`pressureDropdown${index}`).value;
         const variableValue = document.getElementById(`variableDropdown${index}`).value;
         const timeStampValue = document.getElementById(`timeStampDropdown${index}`).value;
-        const displayFormat = formData.get('displayFormat');
+        const displayFormat = formData.get(`displayFormat${index}`);
 
         const formattedTimeStamp = timeStampValue.replace(/:\d{2}Z/, '').replace(/ /, 'T');
 
@@ -301,8 +301,8 @@ function renderCardsForYear(year) {
         } else {
             jpegFileName = "";
         }
-        document.getElementById(`loadingBtn${index}`).style.display = 'none';
-        document.getElementById(`showPlot${index}`).style.display = 'block';
+        // document.getElementById(`loadingBtn${index}`).style.display = 'none';
+        // document.getElementById(`showPlot${index}`).style.display = 'block';
 
         console.log('Generated JPEG file name:', jpegFileName);
 
