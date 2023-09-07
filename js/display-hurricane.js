@@ -8,17 +8,16 @@ function filterDate(geojsonUrl, columnName, targetDate) {
       const filteredFeatures = geojsonData.features.filter(feature => {
         return feature.properties[columnName] === targetDate;
       });
-
-      const uniqueNames = new Set(); // Use a Set to store unique values
+      const uniqueNames = new Set(); 
       filteredFeatures.forEach(feature => {
         uniqueNames.add(feature.properties.Name);
       });
 
-      return Array.from(uniqueNames); // Return the filtered features within the promise chain
+      return Array.from(uniqueNames); 
     })
     .catch(error => {
       console.error('Error fetching or parsing GeoJSON:', error);
-      throw error; // Rethrow the error to continue propagating it
+      throw error; 
     });
 }
 
@@ -88,7 +87,7 @@ function removeOtherHurricanes(hurrName, year, e) {
     if (!map.getSource("ndvi_pre")){
     map.addSource('ndvi_pre', {
       type: 'geojson',
-      data: 'data/try.geojson'
+      data: 'data/NDVI_pre.geojson'
     });
   }
 
@@ -120,7 +119,7 @@ function removeOtherHurricanes(hurrName, year, e) {
     if (!map.getSource("ndvi_post")){
     map.addSource('ndvi_post', {
       type: 'geojson',
-      data: 'data/try_post.geojson'
+      data: 'data/NDVI_post.geojson'
     });
     }
 
