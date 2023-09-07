@@ -327,6 +327,7 @@ function displayHurricanes(year) {
           <strong style="font-size: 18px; color: #333;">${name} : ${year}/${month}/${day}</strong>
           <ul style="list-style-type: none; padding-left: 0;">
               <li style="margin: 5px 0;">Category: ${cat}</li>
+              <li style="margin: 5px 0;">Windspeed: ${intensityWS}</li>
               <li style="margin: 5px 0;">Total Damage ($M): ${e.features[0].properties["Damage (USD in Millions)"]}</li>
               <li style="margin: 5px 0;">Deaths: ${e.features[0].properties["Deaths"]}</li>
           </ul>
