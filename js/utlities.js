@@ -36,9 +36,28 @@ export function fetchCSV(url) {
                 const year = currentline[0];
                 const name = currentline[1];
                 const category = currentline[2];
+                const startDate = currentline[3];
+                const endDate = currentline[4];
 
-                hurricaneMap.set(`${name}-${year}`, category);
+                hurricaneMap.set(`${name}-${year}`, {category, startDate, endDate});
             }
             return hurricaneMap; // Return a map with Name-Year as the key and Category as the value
         });
+}
+
+export function stringToDate(str) {
+    // Splitting the string into date and hour parts
+    const [datePart, timePart] = str.split('T');
+    
+    // Constructing the Date object
+    const date = new Date(datePart);
+    
+    // Adjusting the hour
+    date.setHours(parseInt(timePart));
+    
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });;
 }
