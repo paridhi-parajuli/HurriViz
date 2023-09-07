@@ -158,3 +158,52 @@ label.bold-label{
   background-color: #d3d4d5;  /* Color for selected button - Using Bootstrap's primary color here */
   border: 3px solid #1548c7;  /* thicker border for the selected button */
 }
+
+#map {
+  position: relative; /* This allows its child elements to be positioned absolutely with respect to it */
+}
+
+.legend-ndvi {
+  position: absolute; /* This will position the legend with respect to its closest relative (or body if none is found) ancestor */
+  bottom: 10px; /* You can adjust this */
+  right: 10px; /* You can adjust this */
+  background-color: rgba(255, 255, 255, 0.8); /* semi-transparent white */
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 99;
+}
+
+.legend-category {
+  position: absolute; /* This will position the legend with respect to its closest relative (or body if none is found) ancestor */
+  bottom: 10px; /* You can adjust this */
+  left: 10px; /* You can adjust this */
+  background-color: rgba(255, 255, 255, 0.8); /* semi-transparent white */
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 99;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.legend-color {
+  width: 20px; /* Adjust if needed */
+  height: 20px; /* Adjust if needed */
+  margin-right: 5px;
+  border-radius: 50%; /* Makes it a circle */
+}
+
+.legend-label {
+  font-size: 12px; /* Adjust if needed */
+}
+
+.legend-title {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
