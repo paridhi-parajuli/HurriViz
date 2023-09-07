@@ -3,7 +3,7 @@ This will handle all the logic
 for card contents on the right sidebar.
 */
 
-import { fetchCSV, getIntensityCategory } from './utlities.js';
+import { fetchCSV, getIntensityCategory, stringToDate } from './utlities.js';
 const container = document.querySelector('#cards-div');
 const selectedDropDown = document.getElementById('dropdown');
 
@@ -12,9 +12,10 @@ let allData = [];  // This will hold the fetched data
 // Fetch data from the JSON file once
 Promise.all([
     fetch('data/hurdat.geojson').then(response => response.json()),
-    fetchCSV('data/HURDAT_hurricane_category.csv')
+    fetchCSV('data/hurdat_hurricane_category_start-end_date.csv')
 ])
     .then(([jsonData, hurricaneMap]) => {
+        console.log(hurricaneMap)
         // filter out the goejson to have a single name-year record
         let uniqueNameYearSet = new Set();
         let uniqueEntries = [];
@@ -28,7 +29,10 @@ Promise.all([
 
                 uniqueNameYearSet.add(key);
                 if (hurricaneMap.has(key)) {
-                    feature.properties.Category = hurricaneMap.get(key);
+                    feature.properties.Category = hurricaneMap.get(key).category;
+                    
+                    feature.properties.StartDate = stringToDate(hurricaneMap.get(key).startDate);
+                    feature.properties.EndDate = stringToDate(hurricaneMap.get(key).endDate);
                     feature.properties.Damage = feature.properties["Damage (USD in Millions)"];
                 } else {
                     feature.properties.Category = 'Unknown'; // or some default value
@@ -83,7 +87,7 @@ function renderCardsForYear(year) {
                                 ${getIntensityCategory(cardData.properties.Category)}
                             </div>
                         </div>
-                        <div style="font-size: 0.8em;">${cardData.properties.Year}-${cardData.properties.Month}-${cardData.properties.Day}</div>
+                        <div style="font-size: 0.8em;">${cardData.properties.StartDate}-${cardData.properties.EndDate}</div>
 
                     </div>
                     <div class="collapse" id="collapse${index}">
