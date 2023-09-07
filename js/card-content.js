@@ -102,13 +102,7 @@ function renderCardsForYear(year) {
                                 <div style="padding:5px;">
                                 <label class='bold-label'>Select Visualization Type:</label>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="displayFormat${index}" id="intensityOption${index}" data-index="${index}" value="intensity" checked>
-                                        <label class="form-check-label" for="intensityOption${index}">
-                                            Hurricane Intensity
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="displayFormat${index}" id="horizontalOption${index}" data-index="${index}" value="horizontal">
+                                        <input class="form-check-input" type="radio" name="displayFormat${index}" id="horizontalOption${index}" data-index="${index}" value="horizontal" checked>
                                         <label class="form-check-label" for="horizontalOption${index}">
                                             Horizontal Slice
                                         </label>
@@ -123,6 +117,12 @@ function renderCardsForYear(year) {
                                         <input class="form-check-input" type="radio" name="displayFormat${index}" id="timeOption${index}" data-index="${index}" value="time">
                                         <label class="form-check-label" for="timeOption${index}">
                                             Time-Series
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="displayFormat${index}" id="intensityOption${index}" data-index="${index}" value="intensity">
+                                        <label class="form-check-label" for="intensityOption${index}">
+                                            Hurricane Intensity
                                         </label>
                                     </div>
                                 </div>
@@ -238,24 +238,24 @@ function renderCardsForYear(year) {
         const selectedFormat = document.querySelector(`input[name="displayFormat${index}"]:checked`).value;
     
         switch(selectedFormat) {
-            case "intensity":
-                // 'Intensity' only uses 'timeStampDropdown'
-                timeStampDropdown.style.display = 'block';
-                break;
             case "horizontal":
-                // 'Intensity' only uses 'timeStampDropdown'
+                // 'horizontal' uses all
                 pressureDropdown.style.display = 'block';
                 variableDropdown.style.display = 'block';
                 timeStampDropdown.style.display = 'block';
                 break;
             case "vertical":
-                // 'Intensity' only uses 'timeStampDropdown'
+                // 'vertical' uses 'timeStampDropdown' and 'variableDropdown'
                 variableDropdown.style.display = 'block';
                 timeStampDropdown.style.display = 'block';
                 break;
             case "time":
-                // Display dropdowns for 'time'
+                // 'time' uses 'timeStampDropdown' and 'pressureDropdown'
                 pressureDropdown.style.display = 'block';
+                timeStampDropdown.style.display = 'block';
+                break;
+            case "intensity":
+                // 'Intensity' only uses 'timeStampDropdown'
                 timeStampDropdown.style.display = 'block';
                 break;
         }
@@ -282,29 +282,44 @@ function renderCardsForYear(year) {
         const displayFormat = formData.get(`displayFormat${index}`);
 
         const formattedTimeStamp = timeStampValue.replace(/:\d{2}Z/, '').replace(/ /, 'T');
-
+        const iframeElement = document.querySelector("#iframeModal iframe");
         // Construct the file name
         let jpegFileName = "";
         let modal = "";
-        if (displayFormat == "time") {
-            jpegFileName = `data/templates/IAN/Time-Series/TS_IAN_${variableValue}_${pressureValue}.html`;
-            const iframeElement = document.querySelector("#iframeModal iframe");
-            iframeElement.src = jpegFileName;
-            modal = new bootstrap.Modal(document.getElementById('iframeModal'));
-            modal.show();
+        switch(displayFormat) {
 
-        } else if (displayFormat == "horizontal"){
-            jpegFileName = `Horizontal/IAN_${variableValue}_${pressureValue}_${formattedTimeStamp}_wind0.jpeg`;
-            document.getElementById('modalImage').src = 'data/templates/IAN/' + jpegFileName;
-            modal = new bootstrap.Modal(document.getElementById('jpegModal'));
-            modal.show();
-        } else {
-            jpegFileName = "";
+            case "horizontal":
+                jpegFileName = `data/templates/IAN/Horizontal/IAN_${variableValue}_${pressureValue}_${formattedTimeStamp}_wind0.jpeg`;
+                document.getElementById('modalImage').src = jpegFileName;
+                modal = new bootstrap.Modal(document.getElementById('jpegModal'));
+                modal.show();
+                break;
+
+            case "vertical":
+                jpegFileName = `data/templates/IAN/Cross-Section/CS_IAN_${variableValue}_${formattedTimeStamp}.html`;
+                iframeElement.innerText = "Cross-Section";
+                iframeElement.src = jpegFileName;
+                modal = new bootstrap.Modal(document.getElementById('iframeModal'));
+                modal.show();
+                break;
+            case "time":
+                jpegFileName = `data/templates/IAN/Time-Series/TS_IAN_${variableValue}_${pressureValue}.html`;
+                iframeElement.innerText = "Time-Series";
+                iframeElement.src = jpegFileName;
+                modal = new bootstrap.Modal(document.getElementById('iframeModal'));
+                modal.show();
+                break;
+
+            case "intensity":
+                jpegFileName = `data/templates/IAN/Intensity/2022_IAN.html`;
+                iframeElement.innerText = "Intensity";
+                iframeElement.src = jpegFileName;
+                modal = new bootstrap.Modal(document.getElementById('iframeModal'));
+                modal.show();
+                break;
         }
         // document.getElementById(`loadingBtn${index}`).style.display = 'none';
         // document.getElementById(`showPlot${index}`).style.display = 'block';
-
-        console.log('Generated JPEG file name:', jpegFileName);
 
         // if (form.checkValidity()) {
 

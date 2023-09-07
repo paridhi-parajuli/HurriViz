@@ -35,16 +35,38 @@
                         </div>
                 </div>
                 <div class="col-3" style="overflow-y: auto;">
-                    <div class="row row-padding">
+                    <div class="row row-padding" style="padding-bottom: 0px;">
                         <div class="col-12 nav-bar">
                             <div id="heading" style="display: flex; padding:25px; justify-content: center;">
-                                <img src="images/icon.png" alt="Symbol" width="70px", height="60px">
-                                <h1 style="color : #aaa; "> HurriViz</h1>
+                                <img src="images/icon.png" alt="Symbol" width="90px", height="80px">
+                                <div class="row">
+                                <h1 style="color : #fff; text-align: center;"> HurrX</h1>
+                                <span style="font-size: small; text-align: center; color:#aaa">Expedition through the eye of Hurricane</span>
                             </div>
-                            <div class="row">
-                                <span style="font-size: small; text-align: center;">Informative tool to uncover the power and science behind hurricanes.</span>
                             </div>
+
                         </div> 
+                    </div>
+                    
+                    <div class="grid-buttons">
+                        <div class="row">
+                            <!-- First row of buttons -->
+                            <div class="col-md-3 text-center">
+                                <button class="btn btn-light btn-selected">ERA5</button>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <button class="btn btn-light">MEERA2</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <!-- Second row of buttons -->
+                            <div class="col-md-3 text-center">
+                                <button class="btn btn-light">WRF</button>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <button class="btn btn-light">HRRR</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="row row-padding">
                         <div class="col-md-3 offset-md-1">
@@ -75,7 +97,7 @@
 
     <!-- Modal -->
     <div class="modal fade" id="iframeModal" tabindex="-1" aria-labelledby="iframeModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
             <h5 class="modal-title" id="iframeModalLabel">Time-Series</h5>

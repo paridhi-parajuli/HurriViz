@@ -14,7 +14,7 @@ body, html{
 }
 
 .nav-bar{
-    background: rgb(229, 221, 221);
+    background: #6b6b6b;
 }
 
 #map {  height: 100vh; }
@@ -136,4 +136,25 @@ body, html{
 
 label.bold-label{
   font-weight: bold;
+}
+
+.grid-buttons .btn {
+  width: 100px;       /* fixed width for each button */
+  height: 50px;      /* fixed height for each button */
+  border: 0.5px solid #333;  /* border to create the grid effect */
+  margin: 5px;       /* space between buttons */
+}
+.grid-buttons .row {
+  justify-content: center;  /* center the row content */
+}
+
+
+.grid-buttons{
+  border-top: 2px solid #aaa;
+  padding: 10px 0 10px 0;
+}
+
+.grid-buttons .btn-selected {
+  background-color: #d3d4d5;  /* Color for selected button - Using Bootstrap's primary color here */
+  border: 3px solid #1548c7;  /* thicker border for the selected button */
 }
