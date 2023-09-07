@@ -56,17 +56,31 @@ function removeOtherHurricanes(hurrName, year, e) {
   <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
   <div>
       <strong>${hurrName}</strong>
+      <span  id ="clear" style="font-size: 20px; margin-left: 5px; cursor: pointer;" >×</span>
   </div>
   <div>
       <button id="ndvi-button-pre" style="background-color: #4CAF50; color: white; padding: 5px 10px; border: none; cursor: pointer; margin-right: 5px;">Pre NDVI</button>
       <button id="ndvi-button-post" style="background-color: #007BFF; color: white; padding: 5px 10px; border: none; cursor: pointer;">Post NDVI</button>
   </div>
-  </div>
+</div>
 `)
   popup.addTo(map);
 
   const ndviPre = document.getElementById("ndvi-button-pre");
   const ndviPost = document.getElementById("ndvi-button-post");
+  const clear = document.getElementById("clear");
+
+  clear.addEventListener("click" ,(e)=>{
+    if (map.getLayer("ndvi_pre")) {
+      map.removeLayer("ndvi_pre");
+    }
+
+    if (map.getLayer("ndvi_post")) {
+      map.removeLayer("ndvi_post");
+    }
+
+  });
+  
   ndviPre.addEventListener("click", (event) => {
     if (map.getLayer("ndvi-post")) {
       removeLayer("ndvi-post")
